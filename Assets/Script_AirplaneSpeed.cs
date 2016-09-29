@@ -1,0 +1,170 @@
+﻿using UnityEngine;
+using System.Collections;
+
+public class Script_AirplaneSpeed : MonoBehaviour {
+
+	GameObject chatText;
+
+	float speed;
+	int speedAssigned;
+	int unactivatedSpeedAssigned;
+	int speedMin;
+	int speedMax;
+	float speedChangeRate;
+	bool speedCommandCompleted;
+	bool newCommand;
+	float DelayedCommandTime;
+	float fuel;
+	int fuelChatMark;
+	bool doneOnce;
+
+	// Use this for initialization
+	void Start () {
+		fuelChatMark = 2500;
+		fuel = UnityEngine.Random.Range (2400, 100000);
+		speedMin = 140;
+		speedMax = 600;
+		speedChangeRate = 3.9f;
+		speedCommandCompleted = true;
+	}
+	
+	// Update is called once per frame
+	void Update () {
+		if (fuel < fuelChatMark) {
+			chatText.GetComponent<Script_ChatText> ().StartNewLine (GetComponent<Script_Airplane> ().GetIDColor ());
+			chatText.GetComponent<Script_ChatText> ().EnableBold ();
+			chatText.GetComponent<Script_ChatText> ().AddText ("fuel " + fuelChatMark + ",  " + GetComponent<Script_Airplane> ().GetId () + ".");
+			chatText.GetComponent<Script_ChatText> ().DisableBold ();
+			chatText.GetComponent<Script_ChatText> ().EndLine ();
+			if (fuelChatMark > 500) {
+				fuelChatMark -= 500;				
+			} else {
+				fuelChatMark -= 100;
+			}
+
+		}
+		if (fuel > 0) {
+			fuel -= speed / 100 * Time.deltaTime;			
+		} else {
+			if (!doneOnce) {
+				doneOnce = true;
+				GetComponent<Script_Airplane> ().ActivateOutOfFuelMode ();				
+				speedChangeRate = 1;
+				speedAssigned = 250;
+				speedCommandCompleted = false;
+			}
+			if (GetComponent<Script_AirplaneAltitude> ().GetAltitude () < 200) {
+				speedMin = 0;
+				speedAssigned = 0;
+				speedChangeRate = 9;
+				speedCommandCompleted = false;
+			}
+		}
+
+
+		if (newCommand) {
+			if (Time.time > DelayedCommandTime) {
+				if (unactivatedSpeedAssigned == -1) {
+					speedAssigned = (int)speed;
+				} else {
+					speedAssigned = unactivatedSpeedAssigned;					
+				}
+				speedCommandCompleted = false;
+				newCommand = false;
+			}
+		}
+
+		if (speedCommandCompleted == false) {
+			CheckAndCorrectCommand ();
+			UpdateSpeed ();
+
+			if (speed == speedAssigned) {
+				speedCommandCompleted = true;
+			}
+		}
+	}
+
+	void CheckAndCorrectCommand () {
+		if (speedAssigned < speedMin) {
+			speedAssigned = speedMin;
+		} else if (speedAssigned > speedMax) {
+			speedAssigned = speedMax;
+		}
+	}
+
+	void UpdateSpeed () {
+		if (speed < speedAssigned) {
+			speed += 1 * Time.deltaTime * speedChangeRate;
+			if (speed > speedAssigned) {
+				speed = speedAssigned;
+			}
+		} else if (speed > speedAssigned) {
+			speed -= 1 * Time.deltaTime * speedChangeRate;
+			if (speed < speedAssigned) {
+				speed = speedAssigned;
+			}
+		}
+		if (speed < speedMin) {
+			speed = speedMin;
+		} else if (speed > speedMax) {
+			speed = speedMax;
+		}
+	}
+
+	public void SetSpeed (float spd) {
+		speed = spd;
+	}
+
+	public void CommandSpeed (int spd) {
+		unactivatedSpeedAssigned = spd;
+		DelayedCommandTime = Time.time + UnityEngine.Random.Range (1.5f, 7f);
+		newCommand = true;
+	}
+
+	public float GetSpeed () {
+		return speed;
+	}
+
+	public int GetSpeedAssigned () {
+		return speedAssigned;
+	}
+
+	public void ActivateLandingMode () {
+		speedMin = 0;
+	}
+
+	public void ActivateBrakingMode () {
+		speedChangeRate = 11;
+	}
+
+	public void CommandSpeedWithoutDelay (int spd) {
+		speedAssigned = spd;
+		speedCommandCompleted = false;
+	}
+
+	public void setChatText (GameObject chatTextGameObject) {
+		chatText = chatTextGameObject;
+	}
+
+	public float getFuel () {
+		return fuel;
+	}
+
+	public bool CheckCommand (int spd) {
+		if (spd < speedMin) {
+			return false;
+		}
+		if (spd > speedMax) {
+			return false;
+		}
+		return true;
+	}
+
+	public void Abort () {
+		speedMin = 140;
+		speedMax = 600;
+		speedChangeRate = 3.9f;
+		speedCommandCompleted = true;
+		CommandSpeed (-1);
+	}
+}
