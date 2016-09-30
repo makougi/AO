@@ -5,11 +5,11 @@ using System;
 
 public class Script_ScheduledFlight : ScriptableObject {
 
-	DateTime entryTime;
-	int id;
-	int altitude;
-	int speed;
-	string entrypoint;
+	private DateTime entryTime;
+	private int id;
+	private int altitude;
+	private int speed;
+	private string entrypoint;
 
 	// Use this for initialization
 	void Start () {

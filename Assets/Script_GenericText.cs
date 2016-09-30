@@ -2,7 +2,8 @@
 using System.Collections;
 
 public class Script_GenericText : MonoBehaviour {
-	Vector3 beaconPosition;
+	
+	private Vector3 beaconPosition;
 
 	// Use this for initialization
 	void Start () {

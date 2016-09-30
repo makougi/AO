@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Script_Clock : MonoBehaviour {
 
-	int landed;
+	private int landed;
 
 	// Use this for initialization
 	void Start () {

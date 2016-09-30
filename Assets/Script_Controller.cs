@@ -15,19 +15,19 @@ public class Script_Controller : MonoBehaviour {
 	public GameObject genericText;
 	public GameObject ground;
 	public GameObject mainCamera;
-	public GameObject worldPanel;
-	Dictionary<int, GameObject> airplanesDictionary;
-	List<GameObject> airplanesList;
-	Dictionary<string, Vector3> beaconsDictionary;
-	List<GameObject> genericTexts;
-	List<int> airplanesTooClose;
-	Script_ScheduledFlight flight;
-	Script_Colors colors;
-	bool colorsIsInstantiated;
-	int landed;
-	int counter;
-	bool airplaneTextsOffset;
+	public GameObject DIPanel;
 
+	private Script_ScheduledFlight flight;
+	private Script_Colors colors;
+	private Dictionary<int, GameObject> airplanesDictionary;
+	private Dictionary<string, Vector3> beaconsDictionary;
+	private List<GameObject> airplanesList;
+	private List<GameObject> genericTexts;
+	private List<int> airplanesTooClose;
+	private bool colorsIsInstantiated;
+	private bool airplaneTextsOffset;
+	private int landed;
+	private int counter;
 
 	// Use this for initialization
 	void Start () {
@@ -142,7 +142,7 @@ public class Script_Controller : MonoBehaviour {
 					genericT.GetComponent<Text> ().text = beaconId;
 //					genericText.transform.position = new Vector3 (beaconPosition.x, beaconPosition.z, beaconPosition.y);
 //					genericText.transform.parent = worldPanel.transform;
-					genericT.transform.SetParent (worldPanel.transform);
+					genericT.transform.SetParent (DIPanel.transform);
 					genericTexts.Add (genericT);
 					genericT.GetComponent<Script_GenericText> ().SetBeaconPosition (beaconPosition);
 

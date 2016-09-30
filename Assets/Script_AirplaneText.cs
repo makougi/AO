@@ -3,19 +3,20 @@ using System.Collections;
 
 public class Script_AirplaneText : MonoBehaviour {
 
-	GameObject controller;
-	GameObject airplaneMainDot;
+	private GameObject controller;
+	private GameObject airplaneMainDot;
 
-	int counter;
-	Vector3 position;
-	int airplaneId;
-	int airplaneFlightlevel;
-	int airplaneFlightlevelAssigned;
-	int airplaneHeading;
-	int airplaneSpeed;
-	Vector3 offset;
-	Vector3 offsetDirection;
-	bool offsetActive;
+	private Vector3 position;
+	private Vector3 offset;
+	private Vector3 offsetDirection;
+
+	private bool offsetActive;
+	private int counter;
+	private int airplaneId;
+	private int airplaneFlightlevel;
+	private int airplaneFlightlevelAssigned;
+	private int airplaneHeading;
+	private int airplaneSpeed;
 
 	// Use this for initialization
 	void Start () {

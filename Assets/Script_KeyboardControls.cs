@@ -4,7 +4,8 @@ using System.Collections;
 public class Script_KeyboardControls : MonoBehaviour {
 
 	public GameObject mainCamera;
-	int mainCameraMoveSpeed;
+
+	private int mainCameraMoveSpeed;
 
 	// Use this for initialization
 	void Start () {

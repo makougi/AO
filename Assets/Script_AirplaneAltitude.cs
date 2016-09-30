@@ -3,15 +3,15 @@ using System.Collections;
 
 public class Script_AirplaneAltitude : MonoBehaviour {
 
-	float altitude;
-	int altitudeMin;
-	int altitudeMax;
-	float altitudeAssigned;
-	float unactivatedAltitudeAssigned;
-	float altitudeChangeRate;
-	bool altitudeCommandCompleted;
-	bool newCommand;
-	float DelayedCommandTime;
+	private bool altitudeCommandCompleted;
+	private bool newCommand;
+	private int altitudeMin;
+	private int altitudeMax;
+	private float altitude;
+	private float altitudeAssigned;
+	private float unactivatedAltitudeAssigned;
+	private float altitudeChangeRate;
+	private float DelayedCommandTime;
 
 	// Use this for initialization
 	void Start () {

@@ -5,18 +5,18 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 
 	GameObject chatText;
 
-	float speed;
-	int speedAssigned;
-	int unactivatedSpeedAssigned;
-	int speedMin;
-	int speedMax;
-	float speedChangeRate;
-	bool speedCommandCompleted;
-	bool newCommand;
-	float DelayedCommandTime;
-	float fuel;
-	int fuelChatMark;
-	bool doneOnce;
+	private bool speedCommandCompleted;
+	private bool newCommand;
+	private bool doneOnce;
+	private int speedAssigned;
+	private int unactivatedSpeedAssigned;
+	private int speedMin;
+	private int speedMax;
+	private int fuelChatMark;
+	private float speed;
+	private float speedChangeRate;
+	private float DelayedCommandTime;
+	private float fuel;
 
 	// Use this for initialization
 	void Start () {

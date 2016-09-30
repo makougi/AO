@@ -6,8 +6,8 @@ using UnityEngine.UI;
 
 public class Script_ScheduleText : MonoBehaviour {
 
-	int counter;
-	Queue<Script_ScheduledFlight> scheduledFlights;
+	private Queue<Script_ScheduledFlight> scheduledFlights;
+	private int counter;
 
 	// Use this for initialization
 	void Start () {

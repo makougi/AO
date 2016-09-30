@@ -6,14 +6,15 @@ public class Script_AirplaneDots : MonoBehaviour {
 
 	public GameObject airplaneDot;
 	public GameObject airplaneMainDot;
-	int counter;
-	int positionsListIndex;
-	int positionsListSize;
-	int airplaneDotsListIndex;
-	int airplaneDotsListSize;
-	int offsetIndex;
-	List<GameObject> airplaneDots;
-	List<Vector3> positions;
+
+	private List<GameObject> airplaneDots;
+	private List<Vector3> positions;
+	private int counter;
+	private int positionsListIndex;
+	private int positionsListSize;
+	private int airplaneDotsListIndex;
+	private int airplaneDotsListSize;
+	private int offsetIndex;
 
 	// Use this for initialization
 	void Start () {

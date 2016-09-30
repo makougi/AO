@@ -5,7 +5,8 @@ using UnityEngine.UI;
 public class Script_OffsetButton : MonoBehaviour {
 
 	public GameObject controller;
-	bool toggle;
+
+	private bool toggle;
 
 	// Use this for initialization
 	void Start () {

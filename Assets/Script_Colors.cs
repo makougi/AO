@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Script_Colors : ScriptableObject {
 
-	string[] colors;
-	bool isSetUp;
+	private string[] colors;
+	private bool isSetUp;
 
 	// Use this for initialization
 	void Start () {

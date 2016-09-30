@@ -6,9 +6,10 @@ using UnityEngine.EventSystems;
 public class Script_InputField : MonoBehaviour {
 
 	public GameObject controller;
+
 	private InputField input;
-	bool gameOver;
-	bool placeholderIsActive;
+	private bool gameOver;
+	private bool placeholderIsActive;
 
 	// Use this for initialization
 	void Start () {

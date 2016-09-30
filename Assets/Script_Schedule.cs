@@ -7,10 +7,10 @@ public class Script_Schedule : MonoBehaviour {
 
 	public GameObject scheduleText;
 
-	List<int> activeIds;
-	int scheduleSize;
-	DateTime previousEntryTime;
-	Queue<Script_ScheduledFlight> scheduledFlights;
+	private DateTime previousEntryTime;
+	private List<int> activeIds;
+	private Queue<Script_ScheduledFlight> scheduledFlights;
+	private int scheduleSize;
 
 	// Use this for initialization
 	void Start () {

@@ -3,9 +3,8 @@ using System.Collections;
 
 public class Script_MainCamera : MonoBehaviour {
 
-	float fieldOfView;
-	float delay;
-
+	private float fieldOfView;
+	private float delay;
 
 	// Use this for initialization
 	void Start () {

@@ -5,9 +5,9 @@ public class Script_Approach : MonoBehaviour {
 
 	public GameObject approachText;
 
-	Vector3 approachPosition;
-	Vector3 approachDirection;
-	string id;
+	private Vector3 approachPosition;
+	private Vector3 approachDirection;
+	private string id;
 
 	// Use this for initialization
 	void Start () {

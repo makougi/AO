@@ -4,17 +4,17 @@ using System.Collections.Generic;
 
 public class Script_Parser : MonoBehaviour {
 
-	Dictionary<int, GameObject> airplanesDictionary;
 	public GameObject gameObjectChatText;
-	Script_ChatText chat;
-	Dictionary<string, Vector3> beaconsDictionary;
-	Script_Airplane sAp;
-	Script_AirplaneAltitude sApAltitude;
-	Script_AirplaneSpeed sApSpeed;
-	Script_AirplaneHeading sApHeading;
-	int airplaneId;
-	bool discardCommands;
 
+	private Script_ChatText chat;
+	private Script_Airplane sAp;
+	private Script_AirplaneAltitude sApAltitude;
+	private Script_AirplaneSpeed sApSpeed;
+	private Script_AirplaneHeading sApHeading;
+	private Dictionary<int, GameObject> airplanesDictionary;
+	private Dictionary<string, Vector3> beaconsDictionary;
+	private bool discardCommands;
+	private int airplaneId;
 
 	// Use this for initialization
 	void Start () {

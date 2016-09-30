@@ -6,12 +6,12 @@ using UnityEngine.UI;
 
 public class Script_ChatTextOld : MonoBehaviour {
 
-	bool refresh;
+	StringBuilder oneLineBuilder;
 	Queue<string> chatStrings;
 	Queue<int> linesQueue;
+	bool refresh;
 	int lines;
 	int linesTotal;
-	StringBuilder oneLineBuilder;
 	int maxNumberOfLines;
 	int charactersPerLineCounter;
 	int charactersPerLineLimit;

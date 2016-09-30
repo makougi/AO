@@ -6,30 +6,33 @@ using System;
 public class Script_Airplane : MonoBehaviour {
 
 	public GameObject airplaneText;
-	GameObject controller;
-	GameObject chatText;
-	Script_AirplaneAltitude scriptAirplaneAltitude;
-	Script_AirplaneSpeed scriptAirplaneSpeed;
-	Script_AirplaneHeading scriptAirplaneHeading;
-	Script_AirplaneDots scriptAirplaneDots;
-	Transform otherTransform;
-	List<string> chatCommentsList;
 
-	bool overrideChatIdString;
-	string iDColor;
-	bool newChatComments;
-	int id;
-	float speedMapScaleFactor;
-	bool isInsideApproachArea;
-	int runwayDirection;
-	bool landing;
-	int landingHeadingCorrectionFactor;
-	float delayedChatCommentTime;
-	bool readyForDestroy;
-	float delayedCommandTime;
-	bool once;
-	bool clearedToLand;
-	bool abort;
+	private GameObject controller;
+	private GameObject chatText;
+	private Transform otherTransform;
+	private Script_AirplaneAltitude scriptAirplaneAltitude;
+	private Script_AirplaneSpeed scriptAirplaneSpeed;
+	private Script_AirplaneHeading scriptAirplaneHeading;
+	private Script_AirplaneDots scriptAirplaneDots;
+	private List<string> chatCommentsList;
+
+	private bool overrideChatIdString;
+	private bool newChatComments;
+	private bool isInsideApproachArea;
+	private bool landing;
+	private bool readyForDestroy;
+	private bool once;
+	private bool clearedToLand;
+	private bool abort;
+	private int id;
+	private int landingHeadingCorrectionFactor;
+	private int runwayDirection;
+	private float speedMapScaleFactor;
+	private float delayedChatCommentTime;
+	private float delayedCommandTime;
+	private string iDColor;
+
+
 
 	// Use this for initialization
 	void Start () {

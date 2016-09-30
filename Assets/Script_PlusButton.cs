@@ -4,7 +4,8 @@ using System.Collections;
 public class Script_PlusButton : MonoBehaviour {
 
 	public GameObject MainCamera;
-	bool buttonDown;
+
+	private bool buttonDown;
 
 	// Use this for initialization
 	void Start () {

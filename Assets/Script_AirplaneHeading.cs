@@ -6,24 +6,24 @@ public class Script_AirplaneHeading : MonoBehaviour {
 
 	public GameObject headingAssignedGameObject;
 	public GameObject beaconRotator;
-	//	bool beaconRotatorIsInstantiated;
-
-	int heading;
 	public int[] headingAssigned;
-	int[] headingNormalOrLeftOrRight;
+
+	private Vector3[] beaconPosition;
+	private bool headingCommandCompleted;
+	private bool newCommand;
+	private bool once;
+	private int heading;
+	private int[] headingNormalOrLeftOrRight;
 	// 0 = normal, 1 = left, 2 = right
-	int[] headingMode;
+	private int[] headingMode;
 	// 0 = default, 1 = beacon mode, 2 = holding pattern mode
-	Vector3[] beaconPosition;
-	int beaconRotationSize;
-	float headingChangeRate;
-	bool headingCommandCompleted;
-	bool newCommand;
-	float DelayedCommandTime;
-	bool once;
+	private int beaconRotationSize;
+	private float headingChangeRate;
+	private float DelayedCommandTime;
 
 	// Use this for initialization
 	void Start () {
+		#region primary
 //		headingAssigned = new int[2];
 //		headingMode = new int[2];
 //		headingMode [0] = 0;
@@ -34,9 +34,11 @@ public class Script_AirplaneHeading : MonoBehaviour {
 //		headingChangeRate = 2.5f;
 //		headingAssignedGameObject = Instantiate (headingAssignedGameObject);
 //		headingCommandCompleted = true;
+		#endregion primary
 	}
 
 	public void SecondaryStart () {
+		#region secondary
 		headingAssigned = new int[2];
 		headingMode = new int[2];
 		headingMode [0] = 0;
@@ -49,6 +51,7 @@ public class Script_AirplaneHeading : MonoBehaviour {
 		headingCommandCompleted = true;
 		beaconRotator = Instantiate (beaconRotator);
 		beaconRotator.SetActive (false);
+		#endregion
 	}
 	
 	// Update is called once per frame
