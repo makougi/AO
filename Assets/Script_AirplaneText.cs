@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Script_AirplaneText : MonoBehaviour {
 
-	private GameObject controller;
 	private GameObject airplaneMainDot;
 
+	private GameObject controller;
 	private Vector3 position;
 	private Vector3 offset;
 	private Vector3 offsetDirection;
@@ -20,7 +21,8 @@ public class Script_AirplaneText : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		RandomizeOffset (controller.GetComponent<Script_Controller> ().getAirplaneTextsOffset ());
+		transform.SetParent (controller.GetComponent<Script_Controller> ().GetDIPanel ().transform);
+		RandomizeOffset (controller.GetComponent<Script_Controller> ().GetAirplaneTextsOffset ());
 		while (counter < Time.time) {
 			counter += 3;
 		}
@@ -56,8 +58,8 @@ public class Script_AirplaneText : MonoBehaviour {
 	}
 
 	void UpdateAirplaneText () {
-		transform.position = position;
-		GetComponent<TextMesh> ().text = ""
+		transform.position = new Vector3 (Camera.main.WorldToScreenPoint (position).x, Camera.main.WorldToScreenPoint (position).y, 0);
+		GetComponent<Text> ().text = ""
 		+ IdToFourDigitString (airplaneId) + "\n"
 		+ airplaneFlightlevel + "  " + airplaneFlightlevelAssigned + "\n"
 		+ airplaneSpeed + "  " + HeadingToThreeDigitString (airplaneHeading);

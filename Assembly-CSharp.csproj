@@ -45,6 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\NewBehaviourScript.cs" />
      <Compile Include="Assets\Script_Airplane.cs" />
      <Compile Include="Assets\Script_AirplaneAltitude.cs" />
      <Compile Include="Assets\Script_AirplaneDots.cs" />
@@ -52,7 +53,6 @@
      <Compile Include="Assets\Script_AirplaneSpeed.cs" />
      <Compile Include="Assets\Script_AirplaneText.cs" />
      <Compile Include="Assets\Script_Approach.cs" />
-     <Compile Include="Assets\Script_ApproachText.cs" />
      <Compile Include="Assets\Script_BeaconRotator.cs" />
      <Compile Include="Assets\Script_ChatText.cs" />
      <Compile Include="Assets\Script_ChatTextOld.cs" />

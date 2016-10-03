@@ -15,7 +15,7 @@ public class Script_Controller : MonoBehaviour {
 	public GameObject genericText;
 	public GameObject ground;
 	public GameObject mainCamera;
-	public GameObject DIPanel;
+	public GameObject dIPanel;
 
 	private Script_ScheduledFlight flight;
 	private Script_Colors colors;
@@ -41,6 +41,7 @@ public class Script_Controller : MonoBehaviour {
 		QualitySettings.antiAliasing = 0;
 		QualitySettings.anisotropicFiltering = AnisotropicFiltering.Disable;
 		approach = Instantiate (approach);
+		approach.GetComponent<Script_Approach> ().RunSecondaryStart (this.gameObject);
 		approach.SetActive (true);
 		counter = 0;
 		airplanesDictionary = new Dictionary<int, GameObject> ();
@@ -58,6 +59,12 @@ public class Script_Controller : MonoBehaviour {
 		if (counter > 10) {
 			CheckFlight ();
 			counter = 0;
+		}
+	}
+
+	public void UpdateUIElementPositions () {
+		foreach (GameObject go in genericTexts) {
+			go.GetComponent<Script_GenericText> ().UpdateBeaconPosition ();
 		}
 	}
 
@@ -140,12 +147,10 @@ public class Script_Controller : MonoBehaviour {
 					beaconsDictionary.Add (beaconId, beaconPosition);
 					GameObject genericT = Instantiate (genericText);
 					genericT.GetComponent<Text> ().text = beaconId;
-//					genericText.transform.position = new Vector3 (beaconPosition.x, beaconPosition.z, beaconPosition.y);
-//					genericText.transform.parent = worldPanel.transform;
-					genericT.transform.SetParent (DIPanel.transform);
+					genericT.transform.SetParent (dIPanel.transform);
 					genericTexts.Add (genericT);
 					genericT.GetComponent<Script_GenericText> ().SetBeaconPosition (beaconPosition);
-
+					genericT.GetComponent<Script_GenericText> ().UpdateBeaconPosition ();
 					break;
 				}
 			}
@@ -217,7 +222,15 @@ public class Script_Controller : MonoBehaviour {
 		colors = ScriptableObject.CreateInstance<Script_Colors> ();
 	}
 
-	public bool getAirplaneTextsOffset () {
+	public bool GetAirplaneTextsOffset () {
 		return airplaneTextsOffset;
+	}
+
+	public GameObject GetDIPanel () {
+		return dIPanel;
+	}
+
+	public bool CheckIfDIPanelIsActive () {
+		return dIPanel.activeSelf;
 	}
 }

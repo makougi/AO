@@ -281,4 +281,8 @@ public class Script_Airplane : MonoBehaviour {
 	public GameObject getAirplaneText () {
 		return airplaneText;
 	}
+
+	public GameObject getController () {
+		return controller;
+	}
 }

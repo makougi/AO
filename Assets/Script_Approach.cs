@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Script_Approach : MonoBehaviour {
 
+	//	public GameObject approachImage;
 	public GameObject approachText;
 
 	private Vector3 approachPosition;
@@ -11,22 +13,30 @@ public class Script_Approach : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+	}
+
+	public void RunSecondaryStart (GameObject controller) {
 		approachPosition = new Vector3 (20 - UnityEngine.Random.Range (0, 40), 0, 10 - UnityEngine.Random.Range (0, 20));
 		approachDirection = new Vector3 (90, 10 * UnityEngine.Random.Range (0, 36), 0);
-//		approachPosition = new Vector3 (0, 0, 0);
-//		approachDirection = new Vector3 (90, 0, 0);
 		this.transform.position = approachPosition;
 		this.transform.eulerAngles = approachDirection;
 		id = CreateId ();
 
+//		approachImage = Instantiate (approachImage);
+//		approachImage.transform.SetParent (controller.GetComponent<Script_Controller> ().GetDIPanel ().transform);
+//		approachImage.transform.position = new Vector3 (Camera.main.WorldToScreenPoint (transform.position).x, Camera.main.WorldToScreenPoint (transform.position).y, 0);
+//		approachImage.transform.eulerAngles = new Vector3 (0, 0, approachDirection.y - 180);
+
 		approachText = Instantiate (approachText);
-		approachText.transform.position = transform.TransformPoint (2, -16.2f, 0);
-		approachText.GetComponent<TextMesh> ().text = id;
+		approachText.transform.SetParent (controller.GetComponent<Script_Controller> ().GetDIPanel ().transform);
+		approachText.transform.position = new Vector3 (Camera.main.WorldToScreenPoint (transform.TransformPoint (2, -16.2f, 0)).x, Camera.main.WorldToScreenPoint (transform.TransformPoint (2, -16.2f, 0)).y, 0);
+		approachText.GetComponent<Text> ().text = id;		
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+
 	}
 
 	string CreateId () {
