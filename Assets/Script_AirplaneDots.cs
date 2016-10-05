@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class Script_AirplaneDots : MonoBehaviour {
 
@@ -9,7 +10,7 @@ public class Script_AirplaneDots : MonoBehaviour {
 
 	private List<GameObject> airplaneDots;
 	private List<Vector3> positions;
-	private int counter;
+	private Vector3 airplaneMainDotWorldPosition;
 	private int positionsListIndex;
 	private int positionsListSize;
 	private int airplaneDotsListIndex;
@@ -20,7 +21,6 @@ public class Script_AirplaneDots : MonoBehaviour {
 	void Start () {
 		airplaneMainDot = Instantiate (airplaneMainDot);
 		airplaneMainDot.transform.SetParent (GetComponent<Script_Airplane> ().getController ().GetComponent<Script_Controller> ().GetDIPanel ().transform);
-		GetComponent<Script_Airplane> ().getAirplaneText ().GetComponent<Script_AirplaneText> ().setAirplaneMainDot (airplaneMainDot);
 		airplaneMainDot.transform.position = new Vector3 (Camera.main.WorldToScreenPoint (transform.position).x, Camera.main.WorldToScreenPoint (transform.position).y, 0);
 		airplaneDotsListSize = 5;
 		airplaneDotsListIndex = 0;
@@ -36,30 +36,49 @@ public class Script_AirplaneDots : MonoBehaviour {
 		while (airplaneDots.Count < airplaneDotsListSize) {
 			GameObject ad = Instantiate (airplaneDot);
 			ad.transform.SetParent (GetComponent<Script_Airplane> ().getController ().GetComponent<Script_Controller> ().GetDIPanel ().transform);
-			ad.transform.position = new Vector3 (Camera.main.WorldToScreenPoint (positions [offsetIndex]).x, Camera.main.WorldToScreenPoint (positions [offsetIndex]).y, 0);
+			ad.GetComponent<Script_AirplaneDot> ().UpdateWorldPosition (transform.position);
+			ad.GetComponent<Script_AirplaneDot> ().UpdatePosition ();
 			airplaneDots.Add (ad);
-		}
-		while (counter < Time.time) {
-			counter += 3;
 		}
 	}
 
 	// Update is called once per frame
 	void Update () {
-		if (Time.time > counter) {
-			positions [positionsListIndex] = transform.position;
-			airplaneDots [airplaneDotsListIndex].transform.position = positions [offsetIndex];
-			offsetIndex = step (offsetIndex, positionsListSize);
-			positionsListIndex = step (positionsListIndex, positionsListSize);
-			airplaneDotsListIndex = step (airplaneDotsListIndex, airplaneDotsListSize);
-			counter += 3;
+
+	}
+
+	public void UpdateWorldPosition () {
+		airplaneMainDotWorldPosition = transform.position;
+		UpdateDotsWorldPositions ();
+	}
+
+	public void UpdateUIPosition () {
+		airplaneMainDot.transform.position = new Vector3 (Camera.main.WorldToScreenPoint (airplaneMainDotWorldPosition).x, Camera.main.WorldToScreenPoint (airplaneMainDotWorldPosition).y);
+		foreach (GameObject go in airplaneDots) {
+			go.GetComponent<Script_AirplaneDot> ().UpdatePosition ();
 		}
 	}
 
-	public void UpdatePosition () {
-		airplaneMainDot.transform.position = new Vector3 (Camera.main.WorldToScreenPoint (transform.position).x, Camera.main.WorldToScreenPoint (transform.position).y, 0);
-		foreach (GameObject go in airplaneDots) {
-			
+	private void UpdateDotsWorldPositions () {
+		positions[positionsListIndex] = transform.position;
+		airplaneDots[airplaneDotsListIndex].GetComponent<Script_AirplaneDot> ().UpdateWorldPosition (positions[offsetIndex]);
+		RecolorDots (airplaneDots, airplaneDotsListIndex);
+		offsetIndex = step (offsetIndex, positionsListSize);
+		positionsListIndex = step (positionsListIndex, positionsListSize);
+		airplaneDotsListIndex = step (airplaneDotsListIndex, airplaneDotsListSize);
+	}
+
+	private void RecolorDots (List<GameObject> apDots, int index) {
+		float alpha = 0.4f;
+		Color col = new Color (0, 255, 0, 255);
+		for (int i = 0; i < apDots.Count; i++) {
+			col.a = alpha;
+			apDots[index].GetComponent<Image> ().color = col;
+			alpha = alpha / 1.24f;
+			index--;
+			if (index <= -1) {
+				index = apDots.Count - 1;
+			}
 		}
 	}
 
@@ -79,7 +98,16 @@ public class Script_AirplaneDots : MonoBehaviour {
 		return i;
 	}
 
-	public GameObject getAirplaneMainDot () {
-		return airplaneMainDot;
+	//public gameobject getairplanemaindot () {
+	//	return airplanemaindot;
+	//}
+
+	public Vector3 getAirplaneMainDotWorldPosition () {
+		return airplaneMainDotWorldPosition;
 	}
+
+	public Vector3 getAirplaneMainDotPosition () {
+		return airplaneMainDot.transform.position;
+	}
+
 }

@@ -7,7 +7,7 @@ public class Script_GenericText : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
+		UpdateBeaconPosition ();
 	}
 
 	// Update is called once per frame

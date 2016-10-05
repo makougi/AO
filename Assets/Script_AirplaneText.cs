@@ -4,15 +4,14 @@ using UnityEngine.UI;
 
 public class Script_AirplaneText : MonoBehaviour {
 
-	private GameObject airplaneMainDot;
+	public GameObject lineImage;
 
 	private GameObject controller;
-	private Vector3 position;
+	private Vector3 airplaneMainDotUIPosition;
 	private Vector3 offset;
 	private Vector3 offsetDirection;
+	private Vector3 offsetDefault;
 
-	private bool offsetActive;
-	private int counter;
 	private int airplaneId;
 	private int airplaneFlightlevel;
 	private int airplaneFlightlevelAssigned;
@@ -21,24 +20,26 @@ public class Script_AirplaneText : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		offsetDefault = new Vector3 (0, -30, 0);
+		offset = offsetDefault;
+		lineImage = Instantiate (lineImage);
 		transform.SetParent (controller.GetComponent<Script_Controller> ().GetDIPanel ().transform);
+		lineImage.transform.SetParent (controller.GetComponent<Script_Controller> ().GetDIPanel ().transform);
 		RandomizeOffset (controller.GetComponent<Script_Controller> ().GetAirplaneTextsOffset ());
-		while (counter < Time.time) {
-			counter += 3;
-		}
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		if (Time.time > counter) {
-			UpdateAirplaneText ();
-			counter += 3;
-		}
 	}
 
-	public void UpdatePosition (Vector3 airplanePosition) {
-		position = airplanePosition;
-		position += offset;
+	// Update is called once per frame
+	void Update () {
+
+	}
+
+	public void UpdateUIPosition (Vector3 mainDotPosition) {
+		airplaneMainDotUIPosition = mainDotPosition;
+		UpdatePosition ();
+	}
+
+	public void UpdateAirplaneText () {
+		UpdateText ();
 	}
 
 	public void UpdateAirplaneFlightlevel (int flightlevel) {
@@ -57,14 +58,16 @@ public class Script_AirplaneText : MonoBehaviour {
 		airplaneSpeed = speed;
 	}
 
-	void UpdateAirplaneText () {
-		transform.position = new Vector3 (Camera.main.WorldToScreenPoint (position).x, Camera.main.WorldToScreenPoint (position).y, 0);
+	void UpdatePosition () {
+		transform.position = airplaneMainDotUIPosition + offset;
+		drawLine (airplaneMainDotUIPosition + offsetDirection * 15, transform.position - offsetDirection * 30, 2);
+	}
+
+	void UpdateText () {
 		GetComponent<Text> ().text = ""
 		+ IdToFourDigitString (airplaneId) + "\n"
 		+ airplaneFlightlevel + "  " + airplaneFlightlevelAssigned + "\n"
 		+ airplaneSpeed + "  " + HeadingToThreeDigitString (airplaneHeading);
-		GetComponent<LineRenderer> ().SetPosition (0, airplaneMainDot.transform.position + offsetDirection);
-		GetComponent<LineRenderer> ().SetPosition (1, transform.position - (offsetDirection * 3));
 	}
 
 	string IdToFourDigitString (int integ) {
@@ -103,29 +106,31 @@ public class Script_AirplaneText : MonoBehaviour {
 	public void RandomizeOffset (bool active) {
 		if (active) {
 			int offsetAngle = UnityEngine.Random.Range (0, 360);
-			float offsetDistance = UnityEngine.Random.Range (5f, 15f);
-			offsetDirection = Quaternion.AngleAxis (offsetAngle, Vector3.up) * Vector3.forward;
+			float offsetDistance = UnityEngine.Random.Range (50f, 150f);
+			offsetDirection = Quaternion.AngleAxis (offsetAngle, Vector3.forward) * Vector3.up;
 			offset = offsetDirection * offsetDistance;
-			position = airplaneMainDot.transform.position;
-			position += offset;
-			transform.position = position;
-			GetComponent<LineRenderer> ().enabled = true;
-			GetComponent<LineRenderer> ().SetPosition (0, airplaneMainDot.transform.position + offsetDirection);
-			GetComponent<LineRenderer> ().SetPosition (1, transform.position - offsetDirection * 3);
+			transform.position = airplaneMainDotUIPosition + offset;
+			UpdatePosition ();
+			lineImage.SetActive (true);
 		} else {
-			offset = new Vector3 (0, 0, -3);
-			position = airplaneMainDot.transform.position;
-			position += offset;
-			transform.position = position;
-			GetComponent<LineRenderer> ().enabled = false;
+			lineImage.SetActive (false);
+			offset = offsetDefault;
+			transform.position = airplaneMainDotUIPosition + offset;
+			UpdatePosition ();
 		}
-	}
-
-	public void setAirplaneMainDot (GameObject apMd) {
-		airplaneMainDot = apMd;
 	}
 
 	public void setController (GameObject contr) {
 		controller = contr;
+	}
+
+	private void drawLine (Vector3 pointA, Vector3 pointB, float lineWidth) { // http://answers.unity3d.com/questions/865927/draw-a-2d-line-in-the-new-ui.html
+		Vector3 differenceVector = pointB - pointA;
+
+		lineImage.GetComponent<RectTransform> ().sizeDelta = new Vector2 (differenceVector.magnitude, lineWidth);
+		lineImage.GetComponent<RectTransform> ().pivot = new Vector2 (0, 0.5f);
+		lineImage.GetComponent<RectTransform> ().position = pointA;
+		float angle = Mathf.Atan2 (differenceVector.y, differenceVector.x) * Mathf.Rad2Deg;
+		lineImage.GetComponent<RectTransform> ().rotation = Quaternion.Euler (0, 0, angle);
 	}
 }

@@ -27,6 +27,7 @@ public class Script_Airplane : MonoBehaviour {
 	private int id;
 	private int landingHeadingCorrectionFactor;
 	private int runwayDirection;
+	private int timeCounter;
 	private float speedMapScaleFactor;
 	private float delayedChatCommentTime;
 	private float delayedCommandTime;
@@ -63,6 +64,9 @@ public class Script_Airplane : MonoBehaviour {
 		} else {
 			AddToChatList ("Tower, " + id + ", good afternoon");
 		}
+		while (timeCounter < Time.time) {
+			timeCounter += 3;
+		}
 
 	}
 
@@ -92,7 +96,6 @@ public class Script_Airplane : MonoBehaviour {
 		}
 
 		UpdatePosition ();
-		UpdateAirplaneText ();
 		if (landing) {
 			land ();
 //		} else if (CheckIfReadyToLand () && clearedToLand && delayedCommandTime == -1) {
@@ -108,6 +111,21 @@ public class Script_Airplane : MonoBehaviour {
 			chatText.GetComponent<Script_ChatText> ().DisableBold ();
 			chatText.GetComponent<Script_ChatText> ().EndLine ();			
 		}
+		if (Time.time > timeCounter) {
+			UpdateAirplaneUIElements ();
+			timeCounter += 3;
+		}
+	}
+
+	public void UpdateAirplaneUIElementUIPositions () {
+		scriptAirplaneDots.UpdateUIPosition ();
+		airplaneText.GetComponent<Script_AirplaneText> ().UpdateUIPosition (GetComponent<Script_AirplaneDots> ().getAirplaneMainDotPosition());
+	}
+
+	private void UpdateAirplaneUIElements () {
+		UpdateAirplaneText ();
+		scriptAirplaneDots.UpdateWorldPosition ();
+		UpdateAirplaneUIElementUIPositions ();
 	}
 
 	public void Abort () {
@@ -241,11 +259,11 @@ public class Script_Airplane : MonoBehaviour {
 	}
 
 	void UpdateAirplaneText () {
-		airplaneText.GetComponent<Script_AirplaneText> ().UpdatePosition (transform.position);
 		airplaneText.GetComponent<Script_AirplaneText> ().UpdateAirplaneFlightlevel (AltitudeToFlightlevel (scriptAirplaneAltitude.GetAltitude ()));
 		airplaneText.GetComponent<Script_AirplaneText> ().UpdateAirplaneFlightlevelAssigned (AltitudeToFlightlevel (scriptAirplaneAltitude.GetAltitudeAssigned ()));
 		airplaneText.GetComponent<Script_AirplaneText> ().UpdateAirplaneHeading (scriptAirplaneHeading.GetHeading ());
-		airplaneText.GetComponent<Script_AirplaneText> ().UpdateAirplaneSpeed ((int)scriptAirplaneSpeed.GetSpeed ());	
+		airplaneText.GetComponent<Script_AirplaneText> ().UpdateAirplaneSpeed ((int)scriptAirplaneSpeed.GetSpeed ());
+		airplaneText.GetComponent<Script_AirplaneText> ().UpdateAirplaneText ();
 	}
 
 	public void ActivateOutOfFuelMode () {

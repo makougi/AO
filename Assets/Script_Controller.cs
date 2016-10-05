@@ -51,10 +51,14 @@ public class Script_Controller : MonoBehaviour {
 		switchDisplay ("radar");
 
 		CreateTestFlight ();
+
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
+		if (Time.time < 1) {
+			UpdateUIElementPositions ();
+		}
 		counter++;
 		if (counter > 10) {
 			CheckFlight ();
@@ -66,6 +70,10 @@ public class Script_Controller : MonoBehaviour {
 		foreach (GameObject go in genericTexts) {
 			go.GetComponent<Script_GenericText> ().UpdateBeaconPosition ();
 		}
+		foreach (GameObject go in airplanesList) {
+			go.GetComponent<Script_Airplane> ().UpdateAirplaneUIElementUIPositions ();
+		}
+		approach.GetComponent<Script_Approach> ().UpdateUIPosition ();
 	}
 
 	public void switchDisplay (string displayName) {
@@ -101,7 +109,6 @@ public class Script_Controller : MonoBehaviour {
 				ap.GetComponent<Script_Airplane> ().getAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (false);
 			}
 		}
-		
 	}
 
 	public void ProcessOutOfFuel (int airplaneId) {
@@ -120,7 +127,7 @@ public class Script_Controller : MonoBehaviour {
 			inputField.GetComponent<Script_InputField> ().setGameOver (true);
 			gameObjectChatText.GetComponent<Script_ChatText> ().StartNewLine ("<color=red>");
 			gameObjectChatText.GetComponent<Script_ChatText> ().EnableBold ();
-			gameObjectChatText.GetComponent<Script_ChatText> ().AddText ("Airplanes " + airplanesTooClose [0] + " and " + airplanesTooClose [1] + " too close.");
+			gameObjectChatText.GetComponent<Script_ChatText> ().AddText ("Airplanes " + airplanesTooClose[0] + " and " + airplanesTooClose[1] + " too close.");
 			gameObjectChatText.GetComponent<Script_ChatText> ().AddText ("YOU ARE FIRED");
 			gameObjectChatText.GetComponent<Script_ChatText> ().DisableBold ();
 			gameObjectChatText.GetComponent<Script_ChatText> ().EndLine ();
@@ -141,7 +148,7 @@ public class Script_Controller : MonoBehaviour {
 		while (amount > 0) {
 			amount--;
 			while (true) {
-				string beaconId = "" + letters [UnityEngine.Random.Range (0, letters.Length)] + letters [UnityEngine.Random.Range (0, letters.Length)] + letters [UnityEngine.Random.Range (0, letters.Length)];				
+				string beaconId = "" + letters[UnityEngine.Random.Range (0, letters.Length)] + letters[UnityEngine.Random.Range (0, letters.Length)] + letters[UnityEngine.Random.Range (0, letters.Length)];
 				if (!beaconsDictionary.ContainsKey (beaconId)) {
 					Vector3 beaconPosition = new Vector3 (UnityEngine.Random.Range (-80f, 80f), 0, UnityEngine.Random.Range (-40f, 40f));
 					beaconsDictionary.Add (beaconId, beaconPosition);
@@ -163,7 +170,7 @@ public class Script_Controller : MonoBehaviour {
 	}
 
 	public void RemoveAirplane (int i) {
-		airplanesList.Remove (airplanesDictionary [i]);
+		airplanesList.Remove (airplanesDictionary[i]);
 		airplanesDictionary.Remove (i);
 		schedule.GetComponent<Script_Schedule> ().RemoveIdFromActiveIds (i);
 	}

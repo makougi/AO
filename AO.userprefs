@@ -1,13 +1,6 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Script_MainCamera.cs">
-    <Files>
-      <File FileName="Assets\Script_Controller.cs" Line="65" Column="38" />
-      <File FileName="Assets\Script_GenericText.cs" Line="26" Column="1" />
-      <File FileName="Assets\Script_PlusButton.cs" Line="1" Column="1" />
-      <File FileName="Assets\Script_MainCamera.cs" Line="60" Column="2" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore>
       <Breakpoint file="C:\Omat\Unity\AO4\Assets\Script_ScheduledFlight.cs" line="64" column="81" />

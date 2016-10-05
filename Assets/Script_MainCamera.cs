@@ -12,6 +12,7 @@ public class Script_MainCamera : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		GetComponent<Camera> ().fieldOfView = 150;
+		GetComponent<Camera> ().orthographicSize = 50;
 		delay = 0;
 	}
 	

@@ -45,7 +45,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\NewBehaviourScript.cs" />
      <Compile Include="Assets\Script_Airplane.cs" />
      <Compile Include="Assets\Script_AirplaneAltitude.cs" />
      <Compile Include="Assets\Script_AirplaneDots.cs" />
