@@ -85,6 +85,7 @@ public class Script_Controller : MonoBehaviour {
 				go.SetActive (true);
 			}
 			mainCamera.GetComponent<Camera> ().orthographic = true;
+			UpdateUIElementPositions ();
 		}
 		if (displayName == "satellite") {
 			ground.SetActive (true);
@@ -94,6 +95,7 @@ public class Script_Controller : MonoBehaviour {
 				go.SetActive (false);
 			}
 			mainCamera.GetComponent<Camera> ().orthographic = false;
+			UpdateUIElementPositions ();
 		}
 	}
 

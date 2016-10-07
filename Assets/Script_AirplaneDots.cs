@@ -62,7 +62,7 @@ public class Script_AirplaneDots : MonoBehaviour {
 	private void UpdateDotsWorldPositions () {
 		positions[positionsListIndex] = transform.position;
 		airplaneDots[airplaneDotsListIndex].GetComponent<Script_AirplaneDot> ().UpdateWorldPosition (positions[offsetIndex]);
-		RecolorDots (airplaneDots, airplaneDotsListIndex);
+		//RecolorDots (airplaneDots, airplaneDotsListIndex);
 		offsetIndex = step (offsetIndex, positionsListSize);
 		positionsListIndex = step (positionsListIndex, positionsListSize);
 		airplaneDotsListIndex = step (airplaneDotsListIndex, airplaneDotsListSize);

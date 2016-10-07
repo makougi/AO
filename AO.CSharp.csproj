@@ -90,6 +90,7 @@
     <Compile Include="Assets\Script_Schedule.cs" />
     <Compile Include="Assets\Script_ScheduleText.cs" />
     <Compile Include="Assets\Script_ScheduledFlight.cs" />
+    <Compile Include="Assets\Script_UICanvas.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
