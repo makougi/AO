@@ -28,6 +28,7 @@ public class Script_Controller : MonoBehaviour {
 	private bool airplaneTextsOffset;
 	private int landed;
 	private int counter;
+	private List<List<GameObject>> targets;
 
 	// Use this for initialization
 	void Start () {
@@ -46,9 +47,13 @@ public class Script_Controller : MonoBehaviour {
 		counter = 0;
 		airplanesDictionary = new Dictionary<int, GameObject> ();
 		airplanesList = new List<GameObject> ();
-		GetComponent<Script_Parser> ().SetAirplanesDictionary (airplanesDictionary);
-		GetComponent<Script_Parser> ().SetBeaconsDictionary (beaconsDictionary);
+		GetComponent<Script_ChatParser> ().SetAirplanesDictionary (airplanesDictionary);
+		GetComponent<Script_ChatParser> ().SetBeaconsDictionary (beaconsDictionary);
 		switchDisplay ("radar");
+		targets = new List<List<GameObject>> ();
+		targets.Add (genericTexts);
+		targets.Add (airplanesList);
+
 
 		CreateTestFlight ();
 
@@ -103,18 +108,18 @@ public class Script_Controller : MonoBehaviour {
 		if (active) {
 			airplaneTextsOffset = true;
 			foreach (GameObject ap in airplanesList) {
-				ap.GetComponent<Script_Airplane> ().getAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (true);
+				ap.GetComponent<Script_Airplane> ().GetAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (true);
 			}
 		} else {
 			airplaneTextsOffset = false;
 			foreach (GameObject ap in airplanesList) {
-				ap.GetComponent<Script_Airplane> ().getAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (false);
+				ap.GetComponent<Script_Airplane> ().GetAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (false);
 			}
 		}
 	}
 
 	public void ProcessOutOfFuel (int airplaneId) {
-		inputField.GetComponent<Script_InputField> ().setGameOver (true);
+		inputField.GetComponent<Script_ChatInputField> ().setGameOver (true);
 		gameObjectChatText.GetComponent<Script_ChatText> ().StartNewLine ("<color=red>");
 		gameObjectChatText.GetComponent<Script_ChatText> ().EnableBold ();
 		gameObjectChatText.GetComponent<Script_ChatText> ().AddText ("Airplane " + airplaneId + " out of fuel.");
@@ -126,7 +131,7 @@ public class Script_Controller : MonoBehaviour {
 	public void ProcessAirplanesTooClose (int airplaneId) {
 		airplanesTooClose.Add (airplaneId);
 		if (airplanesTooClose.Count == 2) {
-			inputField.GetComponent<Script_InputField> ().setGameOver (true);
+			inputField.GetComponent<Script_ChatInputField> ().setGameOver (true);
 			gameObjectChatText.GetComponent<Script_ChatText> ().StartNewLine ("<color=red>");
 			gameObjectChatText.GetComponent<Script_ChatText> ().EnableBold ();
 			gameObjectChatText.GetComponent<Script_ChatText> ().AddText ("Airplanes " + airplanesTooClose[0] + " and " + airplanesTooClose[1] + " too close.");
@@ -241,5 +246,9 @@ public class Script_Controller : MonoBehaviour {
 
 	public bool CheckIfDIPanelIsActive () {
 		return dIPanel.activeSelf;
+	}
+
+	public List<List<GameObject>> GetTargets () {
+		return targets;
 	}
 }

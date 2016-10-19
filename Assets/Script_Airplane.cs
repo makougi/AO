@@ -47,7 +47,7 @@ public class Script_Airplane : MonoBehaviour {
 		scriptAirplaneSpeed = GetComponent<Script_AirplaneSpeed> ();
 		scriptAirplaneHeading = GetComponent<Script_AirplaneHeading> ();
 		scriptAirplaneDots = GetComponent<Script_AirplaneDots> ();
-//		speedMapScaleFactor = 0.0006f; previous
+		//		speedMapScaleFactor = 0.0006f; previous
 		speedMapScaleFactor = 0.000514444444f; // 1 kts = 0.000514444444 km / s
 
 		airplaneText = Instantiate (airplaneText);
@@ -82,7 +82,7 @@ public class Script_Airplane : MonoBehaviour {
 				SendChatCommentsToChat (chatCommentsList);
 				newChatComments = false;
 				chatCommentsList.Clear ();
-			}			
+			}
 		}
 		if (abort) {
 			if (Time.time > delayedCommandTime) {
@@ -98,8 +98,8 @@ public class Script_Airplane : MonoBehaviour {
 		UpdatePosition ();
 		if (landing) {
 			land ();
-//		} else if (CheckIfReadyToLand () && clearedToLand && delayedCommandTime == -1) {
-//			delayedCommandTime = Time.time + UnityEngine.Random.Range (1.5f, 4f);
+			//		} else if (CheckIfReadyToLand () && clearedToLand && delayedCommandTime == -1) {
+			//			delayedCommandTime = Time.time + UnityEngine.Random.Range (1.5f, 4f);
 
 		} else if (clearedToLand && Time.time > delayedCommandTime && CheckIfReadyToLand ()) {
 			scriptAirplaneAltitude.ActivateLandingMode ();
@@ -109,7 +109,7 @@ public class Script_Airplane : MonoBehaviour {
 			chatText.GetComponent<Script_ChatText> ().EnableBold ();
 			chatText.GetComponent<Script_ChatText> ().AddText ("landing, " + id + ".");
 			chatText.GetComponent<Script_ChatText> ().DisableBold ();
-			chatText.GetComponent<Script_ChatText> ().EndLine ();			
+			chatText.GetComponent<Script_ChatText> ().EndLine ();
 		}
 		if (Time.time > timeCounter) {
 			UpdateAirplaneUIElements ();
@@ -119,7 +119,7 @@ public class Script_Airplane : MonoBehaviour {
 
 	public void UpdateAirplaneUIElementUIPositions () {
 		scriptAirplaneDots.UpdateUIPosition ();
-		airplaneText.GetComponent<Script_AirplaneText> ().UpdateUIPosition (GetComponent<Script_AirplaneDots> ().getAirplaneMainDotPosition());
+		airplaneText.GetComponent<Script_AirplaneText> ().UpdateUIPosition (GetComponent<Script_AirplaneDots> ().getAirplaneMainDotPosition ());
 	}
 
 	private void UpdateAirplaneUIElements () {
@@ -241,10 +241,10 @@ public class Script_Airplane : MonoBehaviour {
 
 	public bool CheckIfReadyToLand () {
 		if (isInsideApproachArea
-		    && scriptAirplaneAltitude.GetAltitude () <= 2000
-		    && scriptAirplaneSpeed.GetSpeed () <= 240
-		    && (transform.eulerAngles.y > runwayDirection - 11 || transform.eulerAngles.y > -11 + 360)
-		    && (transform.eulerAngles.y < runwayDirection + 11 || transform.eulerAngles.y < +11 - 360)) {
+			&& scriptAirplaneAltitude.GetAltitude () <= 2000
+			&& scriptAirplaneSpeed.GetSpeed () <= 240
+			&& (transform.eulerAngles.y > runwayDirection - 11 || transform.eulerAngles.y > -11 + 360)
+			&& (transform.eulerAngles.y < runwayDirection + 11 || transform.eulerAngles.y < +11 - 360)) {
 			return true;
 		}
 		return false;
@@ -271,23 +271,23 @@ public class Script_Airplane : MonoBehaviour {
 		scriptAirplaneAltitude.ActivateGlideMode ();
 	}
 
-	public int GetId () {
-		return id;
+	public string GetId () {
+		return id.ToString ();
 	}
 
 	public void AddToChatList (string s) {
 		if (chatCommentsList.Count == 0) {
-			s = char.ToUpper (s [0]) + s.Substring (1);
-		} 
-		chatCommentsList.Add (s);			
+			s = char.ToUpper (s[0]) + s.Substring (1);
+		}
+		chatCommentsList.Add (s);
 		delayedChatCommentTime = Time.time + UnityEngine.Random.Range (1.5f, 8f);
 		newChatComments = true;
 	}
 
 	public void OverrideChatList (string s) {
 		chatCommentsList.Clear ();
-		s = char.ToUpper (s [0]) + s.Substring (1);
-		chatCommentsList.Add (s);			
+		s = char.ToUpper (s[0]) + s.Substring (1);
+		chatCommentsList.Add (s);
 		delayedChatCommentTime = Time.time + UnityEngine.Random.Range (1.5f, 8f);
 		newChatComments = true;
 	}
@@ -296,11 +296,15 @@ public class Script_Airplane : MonoBehaviour {
 		return iDColor;
 	}
 
-	public GameObject getAirplaneText () {
+	public GameObject GetAirplaneText () {
 		return airplaneText;
 	}
 
-	public GameObject getController () {
+	public GameObject GetController () {
 		return controller;
+	}
+
+	public Vector3 GetWorldPosition () {
+		return transform.position;
 	}
 }

@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class Script_GenericText : MonoBehaviour {
-	
+
 	private Vector3 beaconPosition;
 
 	// Use this for initialization
@@ -21,5 +21,9 @@ public class Script_GenericText : MonoBehaviour {
 
 	public void UpdateBeaconPosition () {
 		transform.position = new Vector3 (Camera.main.WorldToScreenPoint (beaconPosition).x, Camera.main.WorldToScreenPoint (beaconPosition).y, 0);
+	}
+
+	public Vector3 GetWorldPosition () {
+		return beaconPosition;
 	}
 }

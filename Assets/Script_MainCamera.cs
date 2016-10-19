@@ -8,6 +8,8 @@ public class Script_MainCamera : MonoBehaviour {
 	private float size;
 	private float fieldOfView;
 	private float delay;
+	private GameObject target;
+	private Vector2 offset;
 
 	// Use this for initialization
 	void Start () {
@@ -15,10 +17,16 @@ public class Script_MainCamera : MonoBehaviour {
 		GetComponent<Camera> ().orthographicSize = 50;
 		delay = 0;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-	
+		if (target) {
+			transform.position = new Vector3 (target.transform.position.x + offset.x, transform.position.y, target.transform.position.z + offset.y);
+		}
+	}
+
+	public void SetTarget (GameObject trgt) {
+		target = trgt;
 	}
 
 	public void ZoomIn () {
@@ -47,15 +55,15 @@ public class Script_MainCamera : MonoBehaviour {
 				size++;
 				if (size <= 200) {
 					GetComponent<Camera> ().orthographicSize++;
-				} else {
-					fieldOfView = GetComponent<Camera> ().fieldOfView;
-					if (fieldOfView < 175) {
-						GetComponent<Camera> ().fieldOfView = fieldOfView * ((180 - fieldOfView) / 2000 + 1);
-					}
 				}
-				delay = Time.time + 0.03f;
-				controller.GetComponent<Script_Controller> ().UpdateUIElementPositions ();
+			} else {
+				fieldOfView = GetComponent<Camera> ().fieldOfView;
+				if (fieldOfView < 175) {
+					GetComponent<Camera> ().fieldOfView = fieldOfView * ((180 - fieldOfView) / 2000 + 1);
+				}
 			}
+			delay = Time.time + 0.03f;
+			controller.GetComponent<Script_Controller> ().UpdateUIElementPositions ();
 		}
 	}
 }
