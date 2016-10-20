@@ -165,6 +165,7 @@ public class Script_Controller : MonoBehaviour {
 					genericTexts.Add (genericT);
 					genericT.GetComponent<Script_GenericText> ().SetBeaconPosition (beaconPosition);
 					genericT.GetComponent<Script_GenericText> ().UpdateBeaconPosition ();
+					genericT.GetComponent<Script_GenericText> ().SetId (beaconId);
 					break;
 				}
 			}

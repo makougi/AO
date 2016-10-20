@@ -4,6 +4,7 @@ using System.Collections;
 public class Script_GenericText : MonoBehaviour {
 
 	private Vector3 beaconPosition;
+	private string id;
 
 	// Use this for initialization
 	void Start () {
@@ -25,5 +26,13 @@ public class Script_GenericText : MonoBehaviour {
 
 	public Vector3 GetWorldPosition () {
 		return beaconPosition;
+	}
+
+	public void SetId (string beaconId) {
+		id = beaconId;
+	}
+
+	public string GetId () {
+		return id;
 	}
 }

@@ -22,6 +22,7 @@ public class Script_MainCamera : MonoBehaviour {
 	void Update () {
 		if (target) {
 			transform.position = new Vector3 (target.transform.position.x + offset.x, transform.position.y, target.transform.position.z + offset.y);
+			controller.GetComponent<Script_Controller> ().UpdateUIElementPositions ();
 		}
 	}
 

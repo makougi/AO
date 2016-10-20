@@ -54,31 +54,33 @@ public class Script_IDInputField : MonoBehaviour {
 			text = arg0;
 			input.ActivateInputField ();
 			SendIdTextAndCheckIfValid ();
+			DeselectText ();
 		}
 	}
 
 	public void CheckIfChanged () {
-		cb = input.colors;
-		if (placeholderIsActive) {
-			cb.highlightedColor = Color.white;
-		} else {
-			if (input.text == text) {
-				cb.highlightedColor = Color.blue;
-			} else {
-				cb.highlightedColor = Color.white;
-			}
-		}
-		input.colors = cb;
+		//cb = input.colors;
+		//if (placeholderIsActive) {
+		//	cb.highlightedColor = Color.white;
+		//} else {
+		//	if (input.text == text) {
+		//		cb.highlightedColor = Color.blue;
+		//	} else {
+		//		cb.highlightedColor = Color.white;
+		//	}
+		//}
+		//input.colors = cb;
 	}
 
 	private void SendIdTextAndCheckIfValid () {
+		cb = input.colors;
 		if (controller.GetComponent<Script_IDParser> ().SetIdIfValid (text)) {
-			cb.normalColor = Color.green;
+			cb.highlightedColor = Color.green;
 		} else {
 			if (text == "") {
-				cb.normalColor = Color.white;
+				cb.highlightedColor = Color.white;
 			} else {
-				cb.normalColor = Color.yellow;
+				cb.highlightedColor = Color.yellow;
 			}
 		}
 		input.colors = cb;

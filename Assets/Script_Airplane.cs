@@ -118,7 +118,9 @@ public class Script_Airplane : MonoBehaviour {
 	}
 
 	public void UpdateAirplaneUIElementUIPositions () {
-		scriptAirplaneDots.UpdateUIPosition ();
+		if (scriptAirplaneDots) {
+			scriptAirplaneDots.UpdateUIPosition ();
+		}
 		airplaneText.GetComponent<Script_AirplaneText> ().UpdateUIPosition (GetComponent<Script_AirplaneDots> ().getAirplaneMainDotPosition ());
 	}
 

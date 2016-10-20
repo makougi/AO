@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 public class Script_IDParser : MonoBehaviour {
 
-	private bool toggle;
-	private string id;
+	public GameObject MainCamera;
+
 	private GameObject target;
+	private bool toggle;
 
 	// Use this for initialization
 	void Start () {
@@ -20,14 +21,30 @@ public class Script_IDParser : MonoBehaviour {
 
 	public void ToggleIDTargetOnOff (bool tggle) {
 		toggle = tggle;
+		if (toggle) {
+			MainCamera.GetComponent<Script_MainCamera> ().SetTarget (target);
+		} else {
+			MainCamera.GetComponent<Script_MainCamera> ().SetTarget (null);
+		}
 	}
 
 	public bool SetIdIfValid (string targetId) {
-		foreach (List<GameObject> golist in GetComponent<Script_Controller> ().GetTargets ()) {
-			foreach (GameObject go in golist) {
-				//if go.GetComponent
+		if (targetId == "") {
+			target = null;
+			ToggleIDTargetOnOff (toggle);
+			return false;
+		} else {
+			foreach (List<GameObject> golist in GetComponent<Script_Controller> ().GetTargets ()) {
+				foreach (GameObject go in golist) {
+					if (targetId == go.GetComponent<Script_WorldLocationAndId> ().GetId ()) {
+						target = go;
+						ToggleIDTargetOnOff (toggle);
+						return true;
+					}
+				}
 			}
+			ToggleIDTargetOnOff (toggle);
+			return false;
 		}
-		return false;
 	}
 }
