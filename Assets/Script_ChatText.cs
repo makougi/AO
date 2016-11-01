@@ -10,21 +10,26 @@ public class Script_ChatText : MonoBehaviour {
 	private Queue<string> chatStrings;
 	private bool refresh;
 	private bool newLine;
-	private int maxNumberOfLines;
 
 	// Use this for initialization
 	void Start () {
 		refresh = false;
 		chatStrings = new Queue<string> ();
 		oneLineBuilder = new StringBuilder ();
-		maxNumberOfLines = 19;
 	}
 
 	// Update is called once per frame
 	void Update () {
 		if (refresh) {
 			GetComponent<Text> ().text = QueueOfStringsToString (chatStrings);
-			refresh = false;
+			float textBoxHeight = GetComponent<RectTransform> ().rect.height;
+			float textHeight = LayoutUtility.GetPreferredHeight (GetComponent<RectTransform> ());
+			if (textHeight > textBoxHeight) {
+				chatStrings.Dequeue ();
+				GetComponent<Text> ().text = QueueOfStringsToString (chatStrings);
+			} else {
+				refresh = false;
+			}
 		}
 	}
 
@@ -39,9 +44,6 @@ public class Script_ChatText : MonoBehaviour {
 
 	void AddNewLineToContainer (string newLine) {
 		chatStrings.Enqueue (newLine);
-		while (chatStrings.Count > maxNumberOfLines) {
-			chatStrings.Dequeue ();
-		}
 	}
 
 	public void StartNewLine (string color) {
@@ -58,7 +60,7 @@ public class Script_ChatText : MonoBehaviour {
 
 	public void AddText (string text) {
 		if (newLine) {
-			text = char.ToUpper (text [0]) + text.Substring (1);
+			text = char.ToUpper (text[0]) + text.Substring (1);
 			oneLineBuilder.Append (text);
 			newLine = false;
 		} else {

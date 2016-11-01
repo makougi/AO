@@ -213,6 +213,7 @@ public class Script_Airplane : MonoBehaviour {
 
 	void DestroyThisEntity () {
 		controller.GetComponent<Script_Controller> ().RemoveAirplane (id);
+		airplaneText.GetComponent<Script_AirplaneText> ().DestoryLineImage ();
 		Destroy (airplaneText.gameObject);
 		scriptAirplaneDots.DestroyDots ();
 		scriptAirplaneHeading.DestroyHeadingAssignedGameObject ();

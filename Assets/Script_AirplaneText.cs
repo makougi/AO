@@ -133,4 +133,8 @@ public class Script_AirplaneText : MonoBehaviour {
 		float angle = Mathf.Atan2 (differenceVector.y, differenceVector.x) * Mathf.Rad2Deg;
 		lineImage.GetComponent<RectTransform> ().rotation = Quaternion.Euler (0, 0, angle);
 	}
+
+	public void DestoryLineImage () {
+		Destroy (lineImage.gameObject);
+	}
 }

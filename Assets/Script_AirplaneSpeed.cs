@@ -20,14 +20,14 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		fuelChatMark = 2500;
-		fuel = UnityEngine.Random.Range (2400, 100000);
+		fuelChatMark = 10000;
+		fuel = UnityEngine.Random.Range (10000, 100000);
 		speedMin = 140;
 		speedMax = 600;
-		speedChangeRate = 3.9f;
+		speedChangeRate = 4.9f;
 		speedCommandCompleted = true;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		if (fuel < fuelChatMark) {
@@ -36,19 +36,21 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 			chatText.GetComponent<Script_ChatText> ().AddText ("fuel " + fuelChatMark + ",  " + GetComponent<Script_Airplane> ().GetId () + ".");
 			chatText.GetComponent<Script_ChatText> ().DisableBold ();
 			chatText.GetComponent<Script_ChatText> ().EndLine ();
-			if (fuelChatMark > 500) {
-				fuelChatMark -= 500;				
+			if (fuelChatMark > 2500) {
+				fuelChatMark -= 2500;
+			} else if (fuelChatMark > 500) {
+				fuelChatMark -= 500;
 			} else {
 				fuelChatMark -= 100;
 			}
 
 		}
 		if (fuel > 0) {
-			fuel -= speed / 100 * Time.deltaTime;			
+			fuel -= speed / 75 * Time.deltaTime;
 		} else {
 			if (!doneOnce) {
 				doneOnce = true;
-				GetComponent<Script_Airplane> ().ActivateOutOfFuelMode ();				
+				GetComponent<Script_Airplane> ().ActivateOutOfFuelMode ();
 				speedChangeRate = 1;
 				speedAssigned = 250;
 				speedCommandCompleted = false;
@@ -67,7 +69,7 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 				if (unactivatedSpeedAssigned == -1) {
 					speedAssigned = (int)speed;
 				} else {
-					speedAssigned = unactivatedSpeedAssigned;					
+					speedAssigned = unactivatedSpeedAssigned;
 				}
 				speedCommandCompleted = false;
 				newCommand = false;

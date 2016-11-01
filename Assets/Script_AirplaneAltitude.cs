@@ -20,7 +20,7 @@ public class Script_AirplaneAltitude : MonoBehaviour {
 		altitudeChangeRate = 153;
 		altitudeCommandCompleted = true;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		if (newCommand) {
@@ -28,7 +28,7 @@ public class Script_AirplaneAltitude : MonoBehaviour {
 				if (unactivatedAltitudeAssigned == -1) {
 					altitudeAssigned = altitude;
 				} else {
-					altitudeAssigned = unactivatedAltitudeAssigned;					
+					altitudeAssigned = unactivatedAltitudeAssigned;
 				}
 				altitudeCommandCompleted = false;
 				newCommand = false;
@@ -70,6 +70,7 @@ public class Script_AirplaneAltitude : MonoBehaviour {
 		} else if (altitude > altitudeMax) {
 			altitude = altitudeMax;
 		}
+		transform.position = new Vector3 (transform.position.x, altitude * 0.0003048f, transform.position.z);
 	}
 
 	public bool CheckCommand (int alt) {
