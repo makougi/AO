@@ -6,6 +6,7 @@ using System;
 public class Script_Airplane : MonoBehaviour {
 
 	public GameObject airplaneText;
+	public GameObject airplaneSprite;
 
 	private GameObject controller;
 	private GameObject chatText;
@@ -37,6 +38,7 @@ public class Script_Airplane : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		airplaneSprite = Instantiate (airplaneSprite);
 		iDColor = controller.GetComponent<Script_Controller> ().PickARandomColor ();
 		chatCommentsList = new List<string> ();
 		landingHeadingCorrectionFactor = 10;
@@ -115,6 +117,8 @@ public class Script_Airplane : MonoBehaviour {
 			UpdateAirplaneUIElements ();
 			timeCounter += 3;
 		}
+		airplaneSprite.transform.position = transform.position;
+		airplaneSprite.transform.eulerAngles = new Vector3 (90, 0, transform.eulerAngles.y * -1);
 	}
 
 	public void UpdateAirplaneUIElementUIPositions () {
@@ -217,6 +221,7 @@ public class Script_Airplane : MonoBehaviour {
 		Destroy (airplaneText.gameObject);
 		scriptAirplaneDots.DestroyDots ();
 		scriptAirplaneHeading.DestroyHeadingAssignedGameObject ();
+		Destroy (airplaneSprite.gameObject);
 		Destroy (this.gameObject);
 	}
 

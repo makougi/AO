@@ -4,16 +4,17 @@ using System.Collections;
 public class Script_MainCamera : MonoBehaviour {
 
 	public GameObject controller;
+	Vector2 offset;
 
 	private float size;
 	private float fieldOfView;
 	private float delay;
 	private GameObject target;
-	private Vector2 offset;
+	private Vector3 nonOffsetPosition;
 
 	// Use this for initialization
 	void Start () {
-		GetComponent<Camera> ().fieldOfView = 150;
+		GetComponent<Camera> ().fieldOfView = 50;
 		GetComponent<Camera> ().orthographicSize = 50;
 		delay = 0;
 	}
@@ -21,13 +22,15 @@ public class Script_MainCamera : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (target) {
-			transform.position = new Vector3 (target.transform.position.x + offset.x, transform.position.y, target.transform.position.z + offset.y);
+			nonOffsetPosition = target.transform.position;
+			transform.position = new Vector3 (nonOffsetPosition.x + offset.x, transform.position.y, nonOffsetPosition.z + offset.y);
 			controller.GetComponent<Script_Controller> ().UpdateUIElementPositions ();
 		}
 	}
 
-	public void SetTarget (GameObject trgt) {
+	public void SetTargetAndResetOffset (GameObject trgt) {
 		target = trgt;
+		offset = new Vector2 (0, 0);
 	}
 
 	public void ZoomIn () {
@@ -65,6 +68,14 @@ public class Script_MainCamera : MonoBehaviour {
 			}
 			delay = Time.time + 0.03f;
 			controller.GetComponent<Script_Controller> ().UpdateUIElementPositions ();
+		}
+	}
+	public void AddToOffset (Vector2 os) {
+		offset = offset + os;
+		if (!target) {
+			transform.position = new Vector3 (nonOffsetPosition.x + offset.x, transform.position.y, nonOffsetPosition.z + offset.y);
+			nonOffsetPosition = transform.position;
+			offset = new Vector2 (0, 0);
 		}
 	}
 }

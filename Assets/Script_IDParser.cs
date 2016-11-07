@@ -22,9 +22,9 @@ public class Script_IDParser : MonoBehaviour {
 	public void ToggleIDTargetOnOff (bool tggle) {
 		toggle = tggle;
 		if (toggle) {
-			MainCamera.GetComponent<Script_MainCamera> ().SetTarget (target);
+			MainCamera.GetComponent<Script_MainCamera> ().SetTargetAndResetOffset (target);
 		} else {
-			MainCamera.GetComponent<Script_MainCamera> ().SetTarget (null);
+			MainCamera.GetComponent<Script_MainCamera> ().SetTargetAndResetOffset (null);
 		}
 	}
 

@@ -5,7 +5,7 @@ public class Script_KeyboardControls : MonoBehaviour {
 
 	public GameObject mainCamera;
 
-	private int mainCameraMoveSpeed;
+	private float mainCameraMoveSpeed;
 
 	// Use this for initialization
 	void Start () {
@@ -18,27 +18,25 @@ public class Script_KeyboardControls : MonoBehaviour {
 	}
 
 	void UpdateMainCamera () {
-		if ((Input.GetKey (KeyCode.LeftControl) || Input.GetKey (KeyCode.RightControl)) && Input.GetKey (KeyCode.UpArrow)) {
-			mainCamera.transform.position = new Vector3 (mainCamera.transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z + mainCameraMoveSpeed * Time.deltaTime);
+		if (Input.GetKey (KeyCode.LeftControl) || Input.GetKey (KeyCode.RightControl)) {
+			if (mainCamera.GetComponent<Camera> ().orthographic) {
+				mainCameraMoveSpeed = mainCamera.GetComponent<Camera> ().orthographicSize;
+			} else {
+				mainCameraMoveSpeed = mainCamera.GetComponent<Camera> ().fieldOfView * 3;
+			}
+			if (Input.GetKey (KeyCode.UpArrow)) {
+				mainCamera.GetComponent<Script_MainCamera> ().AddToOffset (new Vector2 (0, mainCameraMoveSpeed * Time.deltaTime));
+			}
+			if (Input.GetKey (KeyCode.DownArrow)) {
+				mainCamera.GetComponent<Script_MainCamera> ().AddToOffset (new Vector2 (0, -(mainCameraMoveSpeed * Time.deltaTime)));
+			}
+			if (Input.GetKey (KeyCode.LeftArrow)) {
+				mainCamera.GetComponent<Script_MainCamera> ().AddToOffset (new Vector2 (-(mainCameraMoveSpeed * Time.deltaTime), 0));
+			}
+			if (Input.GetKey (KeyCode.RightArrow)) {
+				mainCamera.GetComponent<Script_MainCamera> ().AddToOffset (new Vector2 (mainCameraMoveSpeed * Time.deltaTime, 0));
+			}
 			GetComponent<Script_Controller> ().UpdateUIElementPositions ();
-		}
-		if ((Input.GetKey (KeyCode.LeftControl) || Input.GetKey (KeyCode.RightControl)) && Input.GetKey (KeyCode.DownArrow)) {
-			mainCamera.transform.position = new Vector3 (mainCamera.transform.position.x, mainCamera.transform.position.y, mainCamera.transform.position.z - mainCameraMoveSpeed * Time.deltaTime);
-			GetComponent<Script_Controller> ().UpdateUIElementPositions ();
-		}
-		if ((Input.GetKey (KeyCode.LeftControl) || Input.GetKey (KeyCode.RightControl)) && Input.GetKey (KeyCode.LeftArrow)) {
-			mainCamera.transform.position = new Vector3 (mainCamera.transform.position.x - mainCameraMoveSpeed * Time.deltaTime, mainCamera.transform.position.y, mainCamera.transform.position.z);
-			GetComponent<Script_Controller> ().UpdateUIElementPositions ();
-		}
-		if ((Input.GetKey (KeyCode.LeftControl) || Input.GetKey (KeyCode.RightControl)) && Input.GetKey (KeyCode.RightArrow)) {
-			mainCamera.transform.position = new Vector3 (mainCamera.transform.position.x + mainCameraMoveSpeed * Time.deltaTime, mainCamera.transform.position.y, mainCamera.transform.position.z);
-			GetComponent<Script_Controller> ().UpdateUIElementPositions ();
-		}
-		if ((Input.GetKey (KeyCode.LeftControl) || Input.GetKey (KeyCode.RightControl)) && (Input.GetKey (KeyCode.KeypadPlus) || Input.GetKey (KeyCode.Plus))) {
-
-		}
-		if ((Input.GetKey (KeyCode.LeftControl) || Input.GetKey (KeyCode.RightControl)) && (Input.GetKey (KeyCode.KeypadMinus) || Input.GetKey (KeyCode.Minus))) {
-
 		}
 	}
 }
