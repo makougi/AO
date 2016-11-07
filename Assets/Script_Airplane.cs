@@ -121,6 +121,10 @@ public class Script_Airplane : MonoBehaviour {
 		airplaneSprite.transform.eulerAngles = new Vector3 (90, 0, transform.eulerAngles.y * -1);
 	}
 
+	public void SetAirplaneSpriteActive (bool b) {
+		airplaneSprite.SetActive (b);
+	}
+
 	public void UpdateAirplaneUIElementUIPositions () {
 		if (scriptAirplaneDots) {
 			scriptAirplaneDots.UpdateUIPosition ();

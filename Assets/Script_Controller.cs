@@ -13,7 +13,10 @@ public class Script_Controller : MonoBehaviour {
 	public GameObject airplane;
 	public GameObject approach;
 	public GameObject genericText;
-	public GameObject ground;
+	public GameObject ground1;
+	public GameObject ground2;
+	public GameObject ground3;
+	public GameObject ground4;
 	public GameObject mainCamera;
 	public GameObject dIPanel;
 
@@ -83,21 +86,33 @@ public class Script_Controller : MonoBehaviour {
 
 	public void switchDisplay (string displayName) {
 		if (displayName == "radar") {
-			ground.SetActive (false);
+			ground1.SetActive (false);
+			ground2.SetActive (false);
+			ground3.SetActive (false);
+			ground4.SetActive (false);
 			approach.GetComponent<SpriteRenderer> ().enabled = true;
 			approach.GetComponent<Script_Approach> ().approachText.SetActive (true);
 			foreach (GameObject go in genericTexts) {
 				go.SetActive (true);
 			}
+			foreach (GameObject go in airplanesList) {
+				go.GetComponent<Script_Airplane> ().SetAirplaneSpriteActive (false);
+			}
 			mainCamera.GetComponent<Camera> ().orthographic = true;
 			UpdateUIElementPositions ();
 		}
 		if (displayName == "satellite") {
-			ground.SetActive (true);
+			ground1.SetActive (true);
+			ground2.SetActive (true);
+			ground3.SetActive (true);
+			ground4.SetActive (true);
 			approach.GetComponent<SpriteRenderer> ().enabled = false;
 			approach.GetComponent<Script_Approach> ().approachText.SetActive (false);
 			foreach (GameObject go in genericTexts) {
 				go.SetActive (false);
+			}
+			foreach (GameObject go in airplanesList) {
+				go.GetComponent<Script_Airplane> ().SetAirplaneSpriteActive (true);
 			}
 			mainCamera.GetComponent<Camera> ().orthographic = false;
 			UpdateUIElementPositions ();
