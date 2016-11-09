@@ -17,6 +17,10 @@ public class Script_Controller : MonoBehaviour {
 	public GameObject ground2;
 	public GameObject ground3;
 	public GameObject ground4;
+	public GameObject ground5;
+	public GameObject ground6;
+	public GameObject ground7;
+	public GameObject ground8;
 	public GameObject mainCamera;
 	public GameObject dIPanel;
 
@@ -90,6 +94,10 @@ public class Script_Controller : MonoBehaviour {
 			ground2.SetActive (false);
 			ground3.SetActive (false);
 			ground4.SetActive (false);
+			ground5.SetActive (false);
+			ground6.SetActive (false);
+			ground7.SetActive (false);
+			ground8.SetActive (false);
 			approach.GetComponent<SpriteRenderer> ().enabled = true;
 			approach.GetComponent<Script_Approach> ().approachText.SetActive (true);
 			foreach (GameObject go in genericTexts) {
@@ -106,6 +114,10 @@ public class Script_Controller : MonoBehaviour {
 			ground2.SetActive (true);
 			ground3.SetActive (true);
 			ground4.SetActive (true);
+			ground5.SetActive (true);
+			ground6.SetActive (true);
+			ground7.SetActive (true);
+			ground8.SetActive (true);
 			approach.GetComponent<SpriteRenderer> ().enabled = false;
 			approach.GetComponent<Script_Approach> ().approachText.SetActive (false);
 			foreach (GameObject go in genericTexts) {
