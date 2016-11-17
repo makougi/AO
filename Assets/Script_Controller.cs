@@ -13,6 +13,7 @@ public class Script_Controller : MonoBehaviour {
 	public GameObject airplane;
 	public GameObject approach;
 	public GameObject genericText;
+	public GameObject ground;
 	public GameObject ground1;
 	public GameObject ground2;
 	public GameObject ground3;
@@ -90,14 +91,7 @@ public class Script_Controller : MonoBehaviour {
 
 	public void switchDisplay (string displayName) {
 		if (displayName == "radar") {
-			ground1.SetActive (false);
-			ground2.SetActive (false);
-			ground3.SetActive (false);
-			ground4.SetActive (false);
-			ground5.SetActive (false);
-			ground6.SetActive (false);
-			ground7.SetActive (false);
-			ground8.SetActive (false);
+			ground.SetActive (false);
 			approach.GetComponent<SpriteRenderer> ().enabled = true;
 			approach.GetComponent<Script_Approach> ().approachText.SetActive (true);
 			foreach (GameObject go in genericTexts) {
@@ -110,14 +104,7 @@ public class Script_Controller : MonoBehaviour {
 			UpdateUIElementPositions ();
 		}
 		if (displayName == "satellite") {
-			ground1.SetActive (true);
-			ground2.SetActive (true);
-			ground3.SetActive (true);
-			ground4.SetActive (true);
-			ground5.SetActive (true);
-			ground6.SetActive (true);
-			ground7.SetActive (true);
-			ground8.SetActive (true);
+			ground.SetActive (true);
 			approach.GetComponent<SpriteRenderer> ().enabled = false;
 			approach.GetComponent<Script_Approach> ().approachText.SetActive (false);
 			foreach (GameObject go in genericTexts) {
@@ -215,7 +202,7 @@ public class Script_Controller : MonoBehaviour {
 		ap.transform.position = new Vector3 (0, 0, 0);
 		ap.GetComponent<Script_Airplane> ().setControllerAndChatTextGameObjects (this.gameObject, gameObjectChatText);
 		ap.GetComponent<Script_AirplaneSpeed> ().setChatText (gameObjectChatText);
-		ap.GetComponent<Script_Airplane> ().SetUpValues (1111, 2000, 240, 0);
+		ap.GetComponent<Script_Airplane> ().SetUpValues (1111, 2000, 240, 0, false);
 		ap.transform.eulerAngles = new Vector3 (0, 0, 0);
 		airplanesDictionary.Add (1111, ap);
 		airplanesList.Add (ap);
@@ -226,29 +213,25 @@ public class Script_Controller : MonoBehaviour {
 		flight = schedule.GetComponent<Script_Schedule> ().dequeueFlightIfReady ();
 		if (flight) {
 			GameObject ap = Instantiate (airplane);
-			int tempValueDirection = 0;
+			int heading = flight.GetHeading (); ;
 			int tempValuePosition = 40;
-			if (flight.getEntryPoint () == "A") {
-				ap.transform.position = new Vector3 (tempValuePosition, 0, -tempValuePosition);
-				tempValueDirection = 0;
-			} else if (flight.getEntryPoint () == "B") {
-				tempValueDirection = 90;
+			if (flight.GetEntryPoint () == "A") {
+				ap.transform.position = approach.transform.position;
+				heading = (int)approach.transform.eulerAngles.y + 180;
+			} else if (flight.GetEntryPoint () == "B") {
 				ap.transform.position = new Vector3 (-tempValuePosition, 0, -tempValuePosition);
-			} else if (flight.getEntryPoint () == "C") {
-				tempValueDirection = 180;
+			} else if (flight.GetEntryPoint () == "C") {
 				ap.transform.position = new Vector3 (-tempValuePosition, 0, tempValuePosition);
-			} else if (flight.getEntryPoint () == "D") {
-				tempValueDirection = 270;
+			} else if (flight.GetEntryPoint () == "D") {
 				ap.transform.position = new Vector3 (tempValuePosition, 0, tempValuePosition);
-			} else if (flight.getEntryPoint () == "E") {
-				tempValueDirection = 45;
-				ap.transform.position = new Vector3 (-tempValuePosition, 0, -tempValuePosition);
+			} else if (flight.GetEntryPoint () == "E") {
+				ap.transform.position = new Vector3 (tempValuePosition, 0, -tempValuePosition);
 			}
 			ap.GetComponent<Script_Airplane> ().setControllerAndChatTextGameObjects (this.gameObject, gameObjectChatText);
-			ap.GetComponent<Script_Airplane> ().SetUpValues (flight.getId (), flight.getAltitude (), flight.getSpeed (), tempValueDirection);
+			ap.GetComponent<Script_Airplane> ().SetUpValues (flight.GetId (), flight.GetAltitude (), flight.GetSpeed (), heading, flight.GetTakeoff ());
 			ap.GetComponent<Script_AirplaneSpeed> ().setChatText (gameObjectChatText);
-			ap.transform.eulerAngles = new Vector3 (0, tempValueDirection, 0);
-			airplanesDictionary.Add (flight.getId (), ap);
+			ap.transform.eulerAngles = new Vector3 (0, heading, 0);
+			airplanesDictionary.Add (flight.GetId (), ap);
 			airplanesList.Add (ap);
 		}
 	}

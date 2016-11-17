@@ -33,6 +33,7 @@ public class Script_Airplane : MonoBehaviour {
 	private float delayedChatCommentTime;
 	private float delayedCommandTime;
 	private string iDColor;
+	private bool takeoff;
 
 
 
@@ -90,8 +91,8 @@ public class Script_Airplane : MonoBehaviour {
 			if (Time.time > delayedCommandTime) {
 				clearedToLand = false;
 				landing = false;
-				scriptAirplaneAltitude.Abort ();
-				scriptAirplaneSpeed.Abort ();
+				scriptAirplaneAltitude.Abort (takeoff);
+				scriptAirplaneSpeed.Abort (takeoff);
 				scriptAirplaneHeading.Abort ();
 				abort = false;
 			}
@@ -104,8 +105,8 @@ public class Script_Airplane : MonoBehaviour {
 			//			delayedCommandTime = Time.time + UnityEngine.Random.Range (1.5f, 4f);
 
 		} else if (clearedToLand && Time.time > delayedCommandTime && CheckIfReadyToLand ()) {
-			scriptAirplaneAltitude.ActivateLandingMode ();
-			scriptAirplaneSpeed.ActivateLandingMode ();
+			scriptAirplaneAltitude.SetAltitudeMin (0);
+			scriptAirplaneSpeed.SetSpeedMin (0);
 			landing = true;
 			chatText.GetComponent<Script_ChatText> ().StartNewLine (iDColor);
 			chatText.GetComponent<Script_ChatText> ().EnableBold ();
@@ -236,8 +237,16 @@ public class Script_Airplane : MonoBehaviour {
 
 	}
 
-	public void SetUpValues (int airplaneId, int airplaneAltitude, int airplaneSpeed, int airplaneHeading) {
+	public void SetUpValues (int airplaneId, int airplaneAltitude, int airplaneSpeed, int airplaneHeading, bool airplaneTakeoff) {
 		id = airplaneId;
+		takeoff = airplaneTakeoff;
+		if (takeoff) {
+			GetComponent<Script_AirplaneAltitude> ().SetAltitudeMin (0);
+			GetComponent<Script_AirplaneSpeed> ().SetSpeedMin (0);
+		} else {
+			GetComponent<Script_AirplaneAltitude> ().SetAltitudeMin (1000);
+			GetComponent<Script_AirplaneSpeed> ().SetSpeedMin (140);
+		}
 		GetComponent<Script_AirplaneAltitude> ().SetAltitude (airplaneAltitude);
 		GetComponent<Script_AirplaneAltitude> ().CommandAltitude (airplaneAltitude);
 		GetComponent<Script_AirplaneSpeed> ().SetSpeed (airplaneSpeed);

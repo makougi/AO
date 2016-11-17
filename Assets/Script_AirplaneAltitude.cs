@@ -15,7 +15,6 @@ public class Script_AirplaneAltitude : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		altitudeMin = 1000;
 		altitudeMax = 60000;
 		altitudeChangeRate = 153;
 		altitudeCommandCompleted = true;
@@ -101,8 +100,8 @@ public class Script_AirplaneAltitude : MonoBehaviour {
 		return altitudeAssigned;
 	}
 
-	public void ActivateLandingMode () {
-		altitudeMin = 0;
+	public void SetAltitudeMin (int a) {
+		altitudeMin = a;
 	}
 
 	public void CommandAltitudeWithoutDelay (float alt) {
@@ -117,11 +116,17 @@ public class Script_AirplaneAltitude : MonoBehaviour {
 		altitudeCommandCompleted = false;
 	}
 
-	public void Abort () {
-		altitudeMin = 1000;
-		altitudeMax = 60000;
-		altitudeChangeRate = 153;
-		altitudeCommandCompleted = true;
-		CommandAltitude (-1);
+	public void Abort (bool takeoff) {
+		if (takeoff) {
+			altitudeMin = 0;
+			CommandAltitude (0);
+		} else {
+			altitudeMin = 1000;
+			altitudeMax = 60000;
+			altitudeChangeRate = 153;
+			altitudeCommandCompleted = true;
+			CommandAltitude (-1);
+			newCommand = true;
+		}
 	}
 }

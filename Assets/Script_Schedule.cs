@@ -27,8 +27,8 @@ public class Script_Schedule : MonoBehaviour {
 		while (scheduledFlights.Count < scheduleSize) {
 			Script_ScheduledFlight flight = ScriptableObject.CreateInstance<Script_ScheduledFlight> ();
 			flight.SetUpValues (activeIds, previousEntryTime);
-			activeIds.Add (flight.getId ());
-			previousEntryTime = flight.getEntryTime ();
+			activeIds.Add (flight.GetId ());
+			previousEntryTime = flight.GetEntryTime ();
 			scheduledFlights.Enqueue (flight);
 			UpdateScheduleText ();
 		}
@@ -43,7 +43,7 @@ public class Script_Schedule : MonoBehaviour {
 	}
 
 	public Script_ScheduledFlight dequeueFlightIfReady () {
-		if (DateTime.Compare (DateTime.Now, scheduledFlights.Peek ().getEntryTime ()) > 0) {
+		if (DateTime.Compare (DateTime.Now, scheduledFlights.Peek ().GetEntryTime ()) > 0) {
 			return scheduledFlights.Dequeue ();
 		}
 		return null;

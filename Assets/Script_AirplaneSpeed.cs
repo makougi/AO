@@ -22,7 +22,6 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 	void Start () {
 		fuelChatMark = 10000;
 		fuel = UnityEngine.Random.Range (10000, 100000);
-		speedMin = 140;
 		speedMax = 600;
 		speedChangeRate = 4.9f;
 		speedCommandCompleted = true;
@@ -131,8 +130,8 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 		return speedAssigned;
 	}
 
-	public void ActivateLandingMode () {
-		speedMin = 0;
+	public void SetSpeedMin (int s) {
+		speedMin = s;
 	}
 
 	public void ActivateBrakingMode () {
@@ -162,11 +161,17 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 		return true;
 	}
 
-	public void Abort () {
-		speedMin = 140;
-		speedMax = 600;
-		speedChangeRate = 3.9f;
-		speedCommandCompleted = true;
-		CommandSpeed (-1);
+	public void Abort (bool takeoff) {
+		if (takeoff) {
+			speedMin = 0;
+			CommandSpeed (0);
+		} else {
+			speedMin = 140;
+			speedMax = 600;
+			speedChangeRate = 3.9f;
+			speedCommandCompleted = true;
+			CommandSpeed (-1);
+			newCommand = true;
+		}
 	}
 }

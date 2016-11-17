@@ -10,22 +10,31 @@ public class Script_ScheduledFlight : ScriptableObject {
 	private int altitude;
 	private int speed;
 	private string entrypoint;
+	private bool takeoff;
+	private int heading;
 
 	// Use this for initialization
 	void Start () {
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-	
+
 	}
 
 	public void SetUpValues (List<int> activeIds, DateTime previousEntryTime) {
 		entryTime = SelectArbitraryEntrytime (previousEntryTime);
 		id = CreateId (activeIds);
-		altitude = SelectArbitraryAltitude ();
-		speed = SelectArbitrarySpeed ();
 		entrypoint = SelectArbitraryEntrypoint ();
+		if (entrypoint == "A") {
+			takeoff = true;
+			altitude = 0;
+			speed = 0;
+		} else {
+			takeoff = false;
+			altitude = SelectArbitraryAltitude ();
+			speed = SelectArbitrarySpeed ();
+		}
 	}
 
 	DateTime SelectArbitraryEntrytime (DateTime previousEntryTime) {
@@ -38,7 +47,7 @@ public class Script_ScheduledFlight : ScriptableObject {
 			int id = UnityEngine.Random.Range (1, 10000);
 			if (!activeIds.Contains (id)) {
 				return id;
-			}			
+			}
 		}
 	}
 
@@ -51,17 +60,25 @@ public class Script_ScheduledFlight : ScriptableObject {
 	}
 
 	string SelectArbitraryEntrypoint () {
-		List<string> entrypoints = new List<string> ();
-		entrypoints.Add ("A");
-		entrypoints.Add ("B");
-		entrypoints.Add ("C");
-		entrypoints.Add ("D");
-		entrypoints.Add ("E");
-		return entrypoints [UnityEngine.Random.Range (0, 4)];
+		Dictionary<string, int> entrypoints = new Dictionary<string, int> ();
+		entrypoints.Add ("A", 999);
+		entrypoints.Add ("B", 90);
+		entrypoints.Add ("C", 180);
+		entrypoints.Add ("D", 270);
+		entrypoints.Add ("E", 0);
+		heading = 999;
+		return "A";
+		List<string> keys = new List<string> (entrypoints.Keys);
+		string entrypoint = keys[UnityEngine.Random.Range (0, 5)];
+		heading = entrypoints[entrypoint];
+		return entrypoint;
 	}
 
 	override public string ToString () {
-		return "ETA " + HourOrMinuteToTwoDigitString (entryTime.Hour) + ":" + HourOrMinuteToTwoDigitString (entryTime.Minute) + " - ID " + idToFourDigitString (id) + " - FL" + AltitudeToRoundedFlightlevelString (altitude) + " - " + entrypoint;
+		if (altitude == 0) {
+			return "ETA " + HourOrMinuteToTwoDigitString (entryTime.Hour) + ":" + HourOrMinuteToTwoDigitString (entryTime.Minute) + " - ID " + IdToFourDigitString (id) + " - FL" + AltitudeToRoundedFlightlevelString (altitude) + "     - " + entrypoint;
+		}
+		return "ETA " + HourOrMinuteToTwoDigitString (entryTime.Hour) + ":" + HourOrMinuteToTwoDigitString (entryTime.Minute) + " - ID " + IdToFourDigitString (id) + " - FL" + AltitudeToRoundedFlightlevelString (altitude) + " - " + entrypoint;
 	}
 
 	string HourOrMinuteToTwoDigitString (int integ) {
@@ -71,7 +88,7 @@ public class Script_ScheduledFlight : ScriptableObject {
 		return "0" + integ;
 	}
 
-	string idToFourDigitString (int idInt) {
+	string IdToFourDigitString (int idInt) {
 		if (id > 999) {
 			return "" + idInt;
 		}
@@ -89,25 +106,31 @@ public class Script_ScheduledFlight : ScriptableObject {
 		return altid.ToString ();
 	}
 
-	public DateTime getEntryTime () {
+	public DateTime GetEntryTime () {
 		return entryTime;
 	}
 
-	public int getId () {
+	public int GetId () {
 		return id;
 	}
 
-	public int getAltitude () {
+	public int GetAltitude () {
 		return altitude;
 	}
 
-	public int getSpeed () {
+	public int GetSpeed () {
 		return speed;
 	}
 
-	public string getEntryPoint () {
+	public string GetEntryPoint () {
 		return entrypoint;
 	}
 
+	public bool GetTakeoff () {
+		return takeoff;
+	}
 
+	public int GetHeading () {
+		return heading;
+	}
 }
