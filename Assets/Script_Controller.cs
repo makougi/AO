@@ -37,6 +37,7 @@ public class Script_Controller : MonoBehaviour {
 	private int landed;
 	private int counter;
 	private List<List<GameObject>> targets;
+	private string activeDisplayName;
 
 	// Use this for initialization
 	void Start () {
@@ -56,6 +57,7 @@ public class Script_Controller : MonoBehaviour {
 		airplanesDictionary = new Dictionary<int, GameObject> ();
 		airplanesList = new List<GameObject> ();
 		GetComponent<Script_ChatParser> ().SetAirplanesDictionary (airplanesDictionary);
+		GetComponent<Script_ChatParser> ().SetAirplanesList (airplanesList);
 		GetComponent<Script_ChatParser> ().SetBeaconsDictionary (beaconsDictionary);
 		switchDisplay ("radar");
 		targets = new List<List<GameObject>> ();
@@ -90,15 +92,16 @@ public class Script_Controller : MonoBehaviour {
 	}
 
 	public void switchDisplay (string displayName) {
+		activeDisplayName = displayName;
+		foreach (GameObject go in airplanesList) {
+			go.GetComponent<Script_Airplane> ().ChangeDisplayName (displayName);
+		}
 		if (displayName == "radar") {
 			ground.SetActive (false);
 			approach.GetComponent<SpriteRenderer> ().enabled = true;
 			approach.GetComponent<Script_Approach> ().approachText.SetActive (true);
 			foreach (GameObject go in genericTexts) {
 				go.SetActive (true);
-			}
-			foreach (GameObject go in airplanesList) {
-				go.GetComponent<Script_Airplane> ().SetAirplaneSpriteActive (false);
 			}
 			mainCamera.GetComponent<Camera> ().orthographic = true;
 			UpdateUIElementPositions ();
@@ -109,9 +112,6 @@ public class Script_Controller : MonoBehaviour {
 			approach.GetComponent<Script_Approach> ().approachText.SetActive (false);
 			foreach (GameObject go in genericTexts) {
 				go.SetActive (false);
-			}
-			foreach (GameObject go in airplanesList) {
-				go.GetComponent<Script_Airplane> ().SetAirplaneSpriteActive (true);
 			}
 			mainCamera.GetComponent<Camera> ().orthographic = false;
 			UpdateUIElementPositions ();
@@ -202,7 +202,7 @@ public class Script_Controller : MonoBehaviour {
 		ap.transform.position = new Vector3 (0, 0, 0);
 		ap.GetComponent<Script_Airplane> ().setControllerAndChatTextGameObjects (this.gameObject, gameObjectChatText);
 		ap.GetComponent<Script_AirplaneSpeed> ().setChatText (gameObjectChatText);
-		ap.GetComponent<Script_Airplane> ().SetUpValues (1111, 2000, 240, 0, false);
+		ap.GetComponent<Script_Airplane> ().SetUpValues (1111, 2000, 240, 0, false, activeDisplayName);
 		ap.transform.eulerAngles = new Vector3 (0, 0, 0);
 		airplanesDictionary.Add (1111, ap);
 		airplanesList.Add (ap);
@@ -217,7 +217,7 @@ public class Script_Controller : MonoBehaviour {
 			int tempValuePosition = 40;
 			if (flight.GetEntryPoint () == "A") {
 				ap.transform.position = approach.transform.position;
-				heading = (int)approach.transform.eulerAngles.y + 180;
+				heading = (int)approach.transform.eulerAngles.y;
 			} else if (flight.GetEntryPoint () == "B") {
 				ap.transform.position = new Vector3 (-tempValuePosition, 0, -tempValuePosition);
 			} else if (flight.GetEntryPoint () == "C") {
@@ -228,7 +228,7 @@ public class Script_Controller : MonoBehaviour {
 				ap.transform.position = new Vector3 (tempValuePosition, 0, -tempValuePosition);
 			}
 			ap.GetComponent<Script_Airplane> ().setControllerAndChatTextGameObjects (this.gameObject, gameObjectChatText);
-			ap.GetComponent<Script_Airplane> ().SetUpValues (flight.GetId (), flight.GetAltitude (), flight.GetSpeed (), heading, flight.GetTakeoff ());
+			ap.GetComponent<Script_Airplane> ().SetUpValues (flight.GetId (), flight.GetAltitude (), flight.GetSpeed (), heading, flight.GetTakeoff (), activeDisplayName);
 			ap.GetComponent<Script_AirplaneSpeed> ().setChatText (gameObjectChatText);
 			ap.transform.eulerAngles = new Vector3 (0, heading, 0);
 			airplanesDictionary.Add (flight.GetId (), ap);

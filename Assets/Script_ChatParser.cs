@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 
 public class Script_ChatParser : MonoBehaviour {
 
@@ -12,13 +13,16 @@ public class Script_ChatParser : MonoBehaviour {
 	private Script_AirplaneSpeed sApSpeed;
 	private Script_AirplaneHeading sApHeading;
 	private Dictionary<int, GameObject> airplanesDictionary;
+	private List<GameObject> airplanesList;
 	private Dictionary<string, Vector3> beaconsDictionary;
+	private Dictionary<char, string> ICAOPronounciations;
 	private bool discardCommands;
 	private int airplaneId;
 
 	// Use this for initialization
 	void Start () {
 		chat = gameObjectChatText.GetComponent<Script_ChatText> ();
+		SetupICAOPronounciations ();
 	}
 
 	// Update is called once per frame
@@ -30,6 +34,10 @@ public class Script_ChatParser : MonoBehaviour {
 		airplanesDictionary = aPD;
 	}
 
+	public void SetAirplanesList (List<GameObject> aPL) {
+		airplanesList = aPL;
+	}
+
 	public void SetBeaconsDictionary (Dictionary<string, Vector3> bD) {
 		beaconsDictionary = bD;
 	}
@@ -39,7 +47,9 @@ public class Script_ChatParser : MonoBehaviour {
 			chat.StartNewLine ("<color=black>");
 			string[] words = command.Split (' ');
 			int deflt = 0;
-			if (int.TryParse (words[0], out deflt)) {
+			if (words[0] == "ground") {
+				RequestStandbyCheckin ();
+			} else if (int.TryParse (words[0], out deflt)) {
 				int id = int.Parse (words[0]);
 				chat.AddText (id.ToString ());
 				if (airplanesDictionary.ContainsKey (id)) { // if there is an airplane with this id word[0]
@@ -83,6 +93,8 @@ public class Script_ChatParser : MonoBehaviour {
 							Abort (sAp);
 							sAp.OverrideChatList ("aborting");
 							discardCommands = true;
+						} else if (words[i] == "-takeoff") {
+							GrantTakeoffClearance (sAp, sApSpeed);
 						} else {
 							chat.AddText ("...");
 							sAp.OverrideChatList ("say again");
@@ -94,6 +106,17 @@ public class Script_ChatParser : MonoBehaviour {
 			chat.AddDot ();
 			chat.EndLine ();
 			discardCommands = false;
+		}
+	}
+
+	private void RequestStandbyCheckin () {
+		chat.AddText ("Flights ready for takeoff please check in");
+		foreach (GameObject go in airplanesList) {
+			sAp = go.GetComponent<Script_Airplane> ();
+			if (sAp.GetStandby ()) {
+				sAp.OverrideChatIDString ();
+				sAp.AddToChatList (sAp.GetId () + " ready for takeoff");
+			}
 		}
 	}
 
@@ -199,7 +222,7 @@ public class Script_ChatParser : MonoBehaviour {
 			if (headingScript) {
 				if (beaconsDictionary.ContainsKey (beaconId)) {
 					headingScript.CommandBeaconHeading (beaconsDictionary[beaconId]);
-					airplaneScript.AddToChatList ("heading to " + beaconId);
+					airplaneScript.AddToChatList ("heading to " + ConvertLettersToICAOPronounciation (beaconId));
 				} else {
 					airplaneScript.AddToChatList ("unable, invalid beacon id");
 					discardCommands = true;
@@ -215,7 +238,7 @@ public class Script_ChatParser : MonoBehaviour {
 			if (headingScript) {
 				if (beaconsDictionary.ContainsKey (beaconId)) {
 					headingScript.CommandHoldingPattern (beaconsDictionary[beaconId]);
-					airplaneScript.AddToChatList ("holding at " + beaconId);
+					airplaneScript.AddToChatList ("holding at " + ConvertLettersToICAOPronounciation (beaconId));
 				} else {
 					airplaneScript.AddToChatList ("unable, invalid beacon id");
 					discardCommands = true;
@@ -239,8 +262,93 @@ public class Script_ChatParser : MonoBehaviour {
 		}
 	}
 
+	private void GrantTakeoffClearance (Script_Airplane airplaneScript, Script_AirplaneSpeed speedScript) {
+		chat.AddText ("cleared to takeoff");
+		if (airplaneScript.GetTakeoff ()) {
+			airplaneScript.GrantTakeoffClearance ();
+			if (speedScript.GetSpeedAssigned () < 140) {
+				speedScript.CommandSpeed (240);
+			}
+			airplaneScript.AddToChatList ("cleared to takeoff");
+		} else {
+			airplaneScript.AddToChatList ("already airborne");
+			discardCommands = true;
+		}
+	}
+
 	void Abort (Script_Airplane airplaneScript) {
 		chat.AddText ("abort");
 		airplaneScript.Abort ();
+	}
+
+	private void SetupICAOPronounciations () {
+		ICAOPronounciations = new Dictionary<char, string> ();
+		//ICAOPronounciations.Add ('a', "Alpha");
+		//ICAOPronounciations.Add ('b', "Bravo");
+		//ICAOPronounciations.Add ('c', "Charlie");
+		//ICAOPronounciations.Add ('d', "Delta");
+		//ICAOPronounciations.Add ('e', "Echo");
+		//ICAOPronounciations.Add ('f', "Foxtrot");
+		//ICAOPronounciations.Add ('g', "Golf");
+		//ICAOPronounciations.Add ('h', "Hotel");
+		//ICAOPronounciations.Add ('i', "India");
+		//ICAOPronounciations.Add ('j', "Juliet");
+		//ICAOPronounciations.Add ('k', "Kilo");
+		//ICAOPronounciations.Add ('l', "Lima");
+		//ICAOPronounciations.Add ('m', "Mike");
+		//ICAOPronounciations.Add ('n', "November");
+		//ICAOPronounciations.Add ('o', "Oscar");
+		//ICAOPronounciations.Add ('p', "Papa");
+		//ICAOPronounciations.Add ('q', "Quebec");
+		//ICAOPronounciations.Add ('r', "Romeo");
+		//ICAOPronounciations.Add ('s', "Sierra");
+		//ICAOPronounciations.Add ('t', "Tango");
+		//ICAOPronounciations.Add ('u', "Uniform");
+		//ICAOPronounciations.Add ('v', "Victor");
+		//ICAOPronounciations.Add ('w', "Whiskey");
+		//ICAOPronounciations.Add ('x', "Xray");
+		//ICAOPronounciations.Add ('y', "Yankee");
+		//ICAOPronounciations.Add ('z', "Zulu");
+		ICAOPronounciations.Add ('a', "alpha");
+		ICAOPronounciations.Add ('b', "bravo");
+		ICAOPronounciations.Add ('c', "charlie");
+		ICAOPronounciations.Add ('d', "delta");
+		ICAOPronounciations.Add ('e', "echo");
+		ICAOPronounciations.Add ('f', "foxtrot");
+		ICAOPronounciations.Add ('g', "golf");
+		ICAOPronounciations.Add ('h', "hotel");
+		ICAOPronounciations.Add ('i', "india");
+		ICAOPronounciations.Add ('j', "juliet");
+		ICAOPronounciations.Add ('k', "kilo");
+		ICAOPronounciations.Add ('l', "lima");
+		ICAOPronounciations.Add ('m', "mike");
+		ICAOPronounciations.Add ('n', "november");
+		ICAOPronounciations.Add ('o', "oscar");
+		ICAOPronounciations.Add ('p', "papa");
+		ICAOPronounciations.Add ('q', "quebec");
+		ICAOPronounciations.Add ('r', "romeo");
+		ICAOPronounciations.Add ('s', "sierra");
+		ICAOPronounciations.Add ('t', "tango");
+		ICAOPronounciations.Add ('u', "uniform");
+		ICAOPronounciations.Add ('v', "victor");
+		ICAOPronounciations.Add ('w', "whiskey");
+		ICAOPronounciations.Add ('x', "xray");
+		ICAOPronounciations.Add ('y', "yankee");
+		ICAOPronounciations.Add ('z', "zulu");
+	}
+
+	private string ConvertLettersToICAOPronounciation (string word) {
+		StringBuilder sb = new StringBuilder ();
+		for (int i = 0; i < word.Length; i++) {
+			if (i > 0) {
+				sb.Append (" ");
+			}
+			if (ICAOPronounciations.ContainsKey (char.ToLower (word[i]))) {
+				sb.Append (ICAOPronounciations[char.ToLower (word[i])]);
+			} else {
+				sb.Append (char.ToUpper (word[i]));
+			}
+		}
+		return sb.ToString ();
 	}
 }

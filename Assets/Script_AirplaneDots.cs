@@ -16,6 +16,7 @@ public class Script_AirplaneDots : MonoBehaviour {
 	private int airplaneDotsListIndex;
 	private int airplaneDotsListSize;
 	private int offsetIndex;
+	private bool active;
 
 	// Use this for initialization
 	void Start () {
@@ -39,7 +40,9 @@ public class Script_AirplaneDots : MonoBehaviour {
 			ad.GetComponent<Script_AirplaneDot> ().UpdateWorldPosition (transform.position);
 			ad.GetComponent<Script_AirplaneDot> ().UpdatePosition ();
 			airplaneDots.Add (ad);
+			ad.SetActive (active);
 		}
+		airplaneDot.SetActive (active);
 	}
 
 	// Update is called once per frame
@@ -110,4 +113,18 @@ public class Script_AirplaneDots : MonoBehaviour {
 		return airplaneMainDot.transform.position;
 	}
 
+	public void SetActive (bool a) {
+		active = a;
+		if (airplaneMainDot) {
+			airplaneMainDot.SetActive (a);
+
+		}
+		if (airplaneDots != null) {
+			if (airplaneDots.Count > 0) {
+				foreach (GameObject go in airplaneDots) {
+					go.SetActive (a);
+				}
+			}
+		}
+	}
 }
