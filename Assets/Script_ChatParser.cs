@@ -14,7 +14,8 @@ public class Script_ChatParser : MonoBehaviour {
 	private Script_AirplaneHeading sApHeading;
 	private Dictionary<int, GameObject> airplanesDictionary;
 	private List<GameObject> airplanesList;
-	private Dictionary<string, Vector3> beaconsDictionary;
+	private Dictionary<string, GameObject> beaconsDictionary;
+	private Dictionary<string, GameObject> approachesDictionary;
 	private Dictionary<char, string> ICAOPronounciations;
 	private bool discardCommands;
 	private int airplaneId;
@@ -38,8 +39,12 @@ public class Script_ChatParser : MonoBehaviour {
 		airplanesList = aPL;
 	}
 
-	public void SetBeaconsDictionary (Dictionary<string, Vector3> bD) {
+	public void SetBeaconsDictionary (Dictionary<string, GameObject> bD) {
 		beaconsDictionary = bD;
+	}
+
+	public void SetApproachesDictionary (Dictionary<string, GameObject> approachesDic) {
+		approachesDictionary = approachesDic;
 	}
 
 	public void Parse (string command) {
@@ -76,17 +81,17 @@ public class Script_ChatParser : MonoBehaviour {
 				for (int i = 1; i < words.Length; i++) {
 					if (words[i].Length > 0) {
 						if (words[i][0] == 'a') { // if first character is a
-							ParseAndAssignAltitude (sAp, sApAltitude, words, i);
+							ParseAndAssignAltitude (sAp, sApAltitude, words[i].Substring (1));
 						} else if (words[i][0] == 's') { // if first character is s
-							ParseAndAssignSpeed (sAp, sApSpeed, words, i);
+							ParseAndAssignSpeed (sAp, sApSpeed, words[i].Substring (1));
 						} else if (words[i][0] == 'd') { // if first character is d
-							ParseAndAssignHeading (sAp, sApHeading, words, i);
+							ParseAndAssignHeading (sAp, sApHeading, words[i].Substring (1));
 						} else if (words[i][0] == 'f') {
-							ParseAndAssignHeadingToBeacon (sAp, sApHeading, words, i);
+							ParseAndAssignHeadingToBeacon (sAp, sApHeading, words[i].Substring (1));
 						} else if (words[i][0] == '+') {
-							ParseAndAssignHeadingToBeaconAndHoldingPattern (sAp, sApHeading, words, i);
-						} else if (words[i] == "-land") {
-							GrantLandingClearance (sAp);
+							ParseAndAssignHeadingToBeaconAndHoldingPattern (sAp, sApHeading, words[i].Substring (1));
+						} else if (words[i].Substring (0, 5) == "-land") {
+							GrantLandingClearance (sAp, words[i].Substring (5));
 						} else if (words[i] == "-fuel") {
 							RequestFuelInfo (sAp, sApSpeed);
 						} else if (words[i] == "-abort") {
@@ -120,12 +125,12 @@ public class Script_ChatParser : MonoBehaviour {
 		}
 	}
 
-	void ParseAndAssignAltitude (Script_Airplane airplaneScript, Script_AirplaneAltitude altitudeScript, string[] words, int i) {
-		chat.AddText ("altitude to " + words[i].Substring (1));
+	void ParseAndAssignAltitude (Script_Airplane airplaneScript, Script_AirplaneAltitude altitudeScript, string word) {
+		chat.AddText ("altitude to " + word);
 		if (!discardCommands) {
 			int dflt = 0;
-			if (int.TryParse (words[i].Substring (1), out dflt)) {
-				int alt = int.Parse (words[i].Substring (1));
+			if (int.TryParse (word, out dflt)) {
+				int alt = int.Parse (word);
 				if (altitudeScript) {
 					if (altitudeScript.CheckCommand (alt * 100)) {
 						altitudeScript.CommandAltitude (alt * 100); // assign altitude				
@@ -143,12 +148,12 @@ public class Script_ChatParser : MonoBehaviour {
 
 	}
 
-	void ParseAndAssignSpeed (Script_Airplane airplaneScript, Script_AirplaneSpeed speedScript, string[] words, int i) {
-		chat.AddText ("speed to " + words[i].Substring (1));
+	void ParseAndAssignSpeed (Script_Airplane airplaneScript, Script_AirplaneSpeed speedScript, string word) {
+		chat.AddText ("speed to " + word);
 		if (!discardCommands) {
 			int dflt = 0;
-			if (int.TryParse (words[i].Substring (1), out dflt)) {
-				int spd = int.Parse (words[i].Substring (1));
+			if (int.TryParse (word, out dflt)) {
+				int spd = int.Parse (word);
 				if (speedScript) {
 					if (speedScript.CheckCommand (spd)) {
 						speedScript.CommandSpeed (spd); // assign speed										
@@ -165,26 +170,26 @@ public class Script_ChatParser : MonoBehaviour {
 		}
 	}
 
-	void ParseAndAssignHeading (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string[] words, int i) {
-		if (words[i].Length > 1) {
-			if (words[i][1] == 'l') {
+	void ParseAndAssignHeading (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string word) {
+		if (word.Length > 0) {
+			if (word[0] == 'l') {
 				chat.AddText ("turn left heading");
 				if (!discardCommands && airplaneScript) {
 					airplaneScript.AddToChatList ("left to");
 				}
-				ParseAndAssignHeadingNormalOrLeftOrRight (sAp, headingScript, words, i, 1, 2);
-			} else if (words[i][1] == 'r') {
+				ParseAndAssignHeadingNormalOrLeftOrRight (sAp, headingScript, word.Substring (1), 1);
+			} else if (word[0] == 'r') {
 				chat.AddText ("turn right heading ");
 				if (!discardCommands && airplaneScript) {
 					airplaneScript.AddToChatList ("right to");
 				}
-				ParseAndAssignHeadingNormalOrLeftOrRight (sAp, headingScript, words, i, 2, 2);
+				ParseAndAssignHeadingNormalOrLeftOrRight (sAp, headingScript, word.Substring (1), 2);
 			} else {
 				chat.AddText ("heading to");
 				if (!discardCommands && airplaneScript) {
 					airplaneScript.AddToChatList ("heading to");
 				}
-				ParseAndAssignHeadingNormalOrLeftOrRight (sAp, headingScript, words, i, 0, 1);
+				ParseAndAssignHeadingNormalOrLeftOrRight (sAp, headingScript, word, 0);
 			}
 		} else {
 			chat.AddText ("...");
@@ -193,12 +198,12 @@ public class Script_ChatParser : MonoBehaviour {
 		}
 	}
 
-	void ParseAndAssignHeadingNormalOrLeftOrRight (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string[] words, int i, int normalOrLeftOrRight, int substringStart) {
-		chat.AddText (words[i].Substring (substringStart));
+	void ParseAndAssignHeadingNormalOrLeftOrRight (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string word, int normalOrLeftOrRight) {
+		chat.AddText (word);
 		if (!discardCommands) {
 			int dflt = 0;
-			if (int.TryParse (words[i].Substring (substringStart), out dflt)) {
-				int hdg = int.Parse (words[i].Substring (substringStart));
+			if (int.TryParse (word, out dflt)) {
+				int hdg = int.Parse (word);
 				if (headingScript) {
 					if (headingScript.CheckCommand (hdg)) {
 						headingScript.CommandHeading (hdg, normalOrLeftOrRight); // assign heading
@@ -215,13 +220,13 @@ public class Script_ChatParser : MonoBehaviour {
 		}
 	}
 
-	void ParseAndAssignHeadingToBeacon (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string[] words, int i) {
-		string beaconId = words[i].Substring (1).ToUpperInvariant ();
+	void ParseAndAssignHeadingToBeacon (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string word) {
+		string beaconId = word.ToUpperInvariant ();
 		chat.AddText ("heading to " + beaconId);
 		if (!discardCommands) {
 			if (headingScript) {
 				if (beaconsDictionary.ContainsKey (beaconId)) {
-					headingScript.CommandBeaconHeading (beaconsDictionary[beaconId]);
+					headingScript.CommandBeaconHeading (beaconsDictionary[beaconId].GetComponent<Script_Beacon> ().GetWorldPosition ());
 					airplaneScript.AddToChatList ("heading to " + ConvertLettersToICAOPronounciation (beaconId));
 				} else {
 					airplaneScript.AddToChatList ("unable, invalid beacon id");
@@ -231,13 +236,13 @@ public class Script_ChatParser : MonoBehaviour {
 		}
 	}
 
-	void ParseAndAssignHeadingToBeaconAndHoldingPattern (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string[] words, int i) {
-		string beaconId = words[i].Substring (1).ToUpperInvariant ();
+	void ParseAndAssignHeadingToBeaconAndHoldingPattern (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string word) {
+		string beaconId = word.ToUpperInvariant ();
 		chat.AddText ("holding pattern at " + beaconId);
 		if (!discardCommands) {
 			if (headingScript) {
 				if (beaconsDictionary.ContainsKey (beaconId)) {
-					headingScript.CommandHoldingPattern (beaconsDictionary[beaconId]);
+					headingScript.CommandHoldingPattern (beaconsDictionary[beaconId].GetComponent<Script_Beacon> ().GetWorldPosition ());
 					airplaneScript.AddToChatList ("holding at " + ConvertLettersToICAOPronounciation (beaconId));
 				} else {
 					airplaneScript.AddToChatList ("unable, invalid beacon id");
@@ -247,11 +252,17 @@ public class Script_ChatParser : MonoBehaviour {
 		}
 	}
 
-	void GrantLandingClearance (Script_Airplane airplaneScript) {
-		chat.AddText ("cleared to land");
-		airplaneScript.GrantLandingClearance ();
-		if (airplaneScript.CheckIfReadyToLand () == false) {
-			airplaneScript.AddToChatList ("cleared to land");
+	void GrantLandingClearance (Script_Airplane airplaneScript, string wrd) {
+		string word = wrd.ToUpperInvariant ();
+		chat.AddText ("cleared to land " + word);
+		if (approachesDictionary.ContainsKey (word)) {
+			airplaneScript.GrantLandingClearance (word);
+			if (airplaneScript.CheckIfReadyToLand () == false) {
+				airplaneScript.AddToChatList ("cleared to land " + word);
+			}
+		} else {
+			airplaneScript.AddToChatList ("unable, invalid approach id");
+			discardCommands = true;
 		}
 	}
 

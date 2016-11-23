@@ -7,13 +7,16 @@ public class Script_Schedule : MonoBehaviour {
 
 	public GameObject scheduleText;
 
+	private List<GameObject> approaches;
 	private DateTime previousEntryTime;
 	private List<int> activeIds;
 	private Queue<Script_ScheduledFlight> scheduledFlights;
 	private int scheduleSize;
+	private List<Script_FlightEntrypoint> entrypoints;
 
 	// Use this for initialization
 	void Start () {
+		CreateEntrypoints ();
 		if (activeIds == null) {
 			activeIds = new List<int> ();
 		}
@@ -21,17 +24,58 @@ public class Script_Schedule : MonoBehaviour {
 		previousEntryTime = DateTime.Now;
 		scheduledFlights = new Queue<Script_ScheduledFlight> ();
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
 		while (scheduledFlights.Count < scheduleSize) {
 			Script_ScheduledFlight flight = ScriptableObject.CreateInstance<Script_ScheduledFlight> ();
-			flight.SetUpValues (activeIds, previousEntryTime);
+			flight.SetUpValues (activeIds, previousEntryTime, entrypoints);
 			activeIds.Add (flight.GetId ());
 			previousEntryTime = flight.GetEntryTime ();
 			scheduledFlights.Enqueue (flight);
 			UpdateScheduleText ();
 		}
+	}
+
+	private void CreateEntrypoints () {
+		entrypoints = new List<Script_FlightEntrypoint> ();
+		Script_FlightEntrypoint entrypoint = ScriptableObject.CreateInstance<Script_FlightEntrypoint> ();
+		foreach (GameObject go in approaches) {
+			entrypoint = ScriptableObject.CreateInstance<Script_FlightEntrypoint> ();
+			entrypoint.SetId (go.GetComponent<Script_Approach> ().GetId ());
+			entrypoint.SetDirection (go.GetComponent<Script_Approach> ().GetDirection ());
+			entrypoint.SetPosition (go.GetComponent<Script_Approach> ().GetPositionWorldVector2 ());
+			entrypoint.SetTakeoff (true);
+			entrypoints.Add (entrypoint);
+		}
+		entrypoint = ScriptableObject.CreateInstance<Script_FlightEntrypoint> ();
+		entrypoint.SetId ("A");
+		entrypoint.SetDirection (0);
+		entrypoint.SetPosition (new Vector2 (40, -40));
+		entrypoint.SetTakeoff (false);
+		entrypoints.Add (entrypoint);
+		entrypoint = ScriptableObject.CreateInstance<Script_FlightEntrypoint> ();
+		entrypoint.SetId ("B");
+		entrypoint.SetDirection (90);
+		entrypoint.SetPosition (new Vector2 (-40, -40));
+		entrypoint.SetTakeoff (false);
+		entrypoints.Add (entrypoint);
+		entrypoint = ScriptableObject.CreateInstance<Script_FlightEntrypoint> ();
+		entrypoint.SetId ("C");
+		entrypoint.SetDirection (180);
+		entrypoint.SetPosition (new Vector2 (-40, 40));
+		entrypoint.SetTakeoff (false);
+		entrypoints.Add (entrypoint);
+		entrypoint = ScriptableObject.CreateInstance<Script_FlightEntrypoint> ();
+		entrypoint.SetId ("D");
+		entrypoint.SetDirection (270);
+		entrypoint.SetPosition (new Vector2 (40, 40));
+		entrypoint.SetTakeoff (false);
+		entrypoints.Add (entrypoint);
+	}
+
+	public void SetApproaches (List<GameObject> apprchs) {
+		approaches = apprchs;
 	}
 
 	void UpdateScheduleText () {

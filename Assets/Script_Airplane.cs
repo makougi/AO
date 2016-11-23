@@ -38,6 +38,8 @@ public class Script_Airplane : MonoBehaviour {
 	private bool standby;
 	private bool clearedToTakeoff;
 	private string displayName;
+	private string approachId;
+	private string clearedApproachId;
 
 	// Use this for initialization
 	void Start () {
@@ -175,7 +177,8 @@ public class Script_Airplane : MonoBehaviour {
 		delayedCommandTime = Time.time + UnityEngine.Random.Range (1.5f, 3f);
 	}
 
-	public void GrantLandingClearance () {
+	public void GrantLandingClearance (string clearedApprchId) {
+		clearedApproachId = clearedApprchId;
 		delayedCommandTime = Time.time + UnityEngine.Random.Range (1.5f, 4f);
 		clearedToLand = true;
 	}
@@ -261,8 +264,9 @@ public class Script_Airplane : MonoBehaviour {
 		Destroy (this.gameObject);
 	}
 
-	public void setIsInsideApproachArea (bool b, Transform approachTransform) {
+	public void setIsInsideApproachArea (bool b, Transform approachTransform, string id) {
 		isInsideApproachArea = b;
+		approachId = id;
 		runwayDirection = (int)approachTransform.eulerAngles.y;
 		otherTransform = approachTransform;
 
@@ -294,6 +298,7 @@ public class Script_Airplane : MonoBehaviour {
 		GetComponent<Script_AirplaneHeading> ().SetHeading (airplaneHeading);
 		GetComponent<Script_AirplaneHeading> ().SecondaryStart ();
 		GetComponent<Script_AirplaneHeading> ().CommandHeading (airplaneHeading, 0);
+		transform.eulerAngles = new Vector3 (0, airplaneHeading, 0);
 		if (airplaneText.activeInHierarchy) {
 			airplaneText.GetComponent<Script_AirplaneText> ().SetAirplaneId (id);
 			airplaneText.GetComponent<Script_AirplaneText> ().setController (controller);
@@ -302,6 +307,7 @@ public class Script_Airplane : MonoBehaviour {
 
 	public bool CheckIfReadyToLand () {
 		if (isInsideApproachArea
+			&& clearedApproachId == approachId
 			&& scriptAirplaneAltitude.GetAltitude () <= 2000
 			&& scriptAirplaneSpeed.GetSpeed () <= 240
 			&& (transform.eulerAngles.y > runwayDirection - 11 || transform.eulerAngles.y > -11 + 360)

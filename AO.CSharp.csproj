@@ -73,6 +73,7 @@
     <Compile Include="Assets\Script_AirplaneSpeed.cs" />
     <Compile Include="Assets\Script_AirplaneText.cs" />
     <Compile Include="Assets\Script_Approach.cs" />
+    <Compile Include="Assets\Script_Beacon.cs" />
     <Compile Include="Assets\Script_BeaconRotator.cs" />
     <Compile Include="Assets\Script_ChatInputField.cs" />
     <Compile Include="Assets\Script_ChatParser.cs" />
@@ -81,11 +82,10 @@
     <Compile Include="Assets\Script_Clock.cs" />
     <Compile Include="Assets\Script_Colors.cs" />
     <Compile Include="Assets\Script_Controller.cs" />
-    <Compile Include="Assets\Script_GenericText.cs" />
+    <Compile Include="Assets\Script_FlightEntrypoint.cs" />
     <Compile Include="Assets\Script_IDButton.cs" />
     <Compile Include="Assets\Script_IDInputField.cs" />
     <Compile Include="Assets\Script_IDParser.cs" />
-    <Compile Include="Assets\Script_WorldLocationAndId.cs" />
     <Compile Include="Assets\Script_KeyboardControls.cs" />
     <Compile Include="Assets\Script_MainCamera.cs" />
     <Compile Include="Assets\Script_MinusButton.cs" />
@@ -97,6 +97,7 @@
     <Compile Include="Assets\Script_ScheduleText.cs" />
     <Compile Include="Assets\Script_ScheduledFlight.cs" />
     <Compile Include="Assets\Script_UICanvas.cs" />
+    <Compile Include="Assets\Script_WorldLocationAndId.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

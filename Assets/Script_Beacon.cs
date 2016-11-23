@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Script_GenericText : MonoBehaviour {
+public class Script_Beacon : MonoBehaviour {
 
 	private Vector3 beaconPosition;
 	private string id;
