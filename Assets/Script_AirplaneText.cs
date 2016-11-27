@@ -38,24 +38,12 @@ public class Script_AirplaneText : MonoBehaviour {
 		UpdatePosition ();
 	}
 
-	public void UpdateAirplaneText () {
-		UpdateText ();
-	}
-
-	public void UpdateAirplaneFlightlevel (int flightlevel) {
+	public void UpdateAirplaneText (int flightlevel, int flightlevelAssigned, int heading, int speed) {
 		airplaneFlightlevel = flightlevel;
-	}
-
-	public void UpdateAirplaneFlightlevelAssigned (int flightlevelAssigned) {
 		airplaneFlightlevelAssigned = flightlevelAssigned;
-	}
-
-	public void UpdateAirplaneHeading (int heading) {
 		airplaneHeading = heading;
-	}
-
-	public void UpdateAirplaneSpeed (int speed) {
 		airplaneSpeed = speed;
+		UpdateText ();
 	}
 
 	void UpdatePosition () {

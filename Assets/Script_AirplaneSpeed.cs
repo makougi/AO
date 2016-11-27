@@ -3,8 +3,6 @@ using System.Collections;
 
 public class Script_AirplaneSpeed : MonoBehaviour {
 
-	GameObject chatText;
-
 	private bool speedCommandCompleted;
 	private bool newCommand;
 	private bool doneOnce;
@@ -30,11 +28,7 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (fuel < fuelChatMark) {
-			chatText.GetComponent<Script_ChatText> ().StartNewLine (GetComponent<Script_Airplane> ().GetIDColor ());
-			chatText.GetComponent<Script_ChatText> ().EnableBold ();
-			chatText.GetComponent<Script_ChatText> ().AddText ("fuel " + fuelChatMark + ",  " + GetComponent<Script_Airplane> ().GetId () + ".");
-			chatText.GetComponent<Script_ChatText> ().DisableBold ();
-			chatText.GetComponent<Script_ChatText> ().EndLine ();
+			GetComponent<Script_AirplaneChat> ().ExecuteFuelMessage (fuelChatMark);
 			if (fuelChatMark > 2500) {
 				fuelChatMark -= 2500;
 			} else if (fuelChatMark > 500) {
@@ -49,7 +43,7 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 		} else {
 			if (!doneOnce) {
 				doneOnce = true;
-				GetComponent<Script_Airplane> ().ActivateOutOfFuelMode ();
+				GetComponent<Script_AirplaneMain> ().ActivateOutOfFuelMode ();
 				speedChangeRate = 1;
 				speedAssigned = 250;
 				speedCommandCompleted = false;
@@ -83,6 +77,12 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 				speedCommandCompleted = true;
 			}
 		}
+	}
+
+	public void Construct (int spd) {
+		unactivatedSpeedAssigned = spd;
+		speedAssigned = spd;
+		speed = spd;
 	}
 
 	void CheckAndCorrectCommand () {
@@ -136,15 +136,12 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 
 	public void ActivateBrakingMode () {
 		speedChangeRate = 11;
+		CommandSpeedWithoutDelay (0);
 	}
 
 	public void CommandSpeedWithoutDelay (int spd) {
 		speedAssigned = spd;
 		speedCommandCompleted = false;
-	}
-
-	public void setChatText (GameObject chatTextGameObject) {
-		chatText = chatTextGameObject;
 	}
 
 	public float getFuel () {

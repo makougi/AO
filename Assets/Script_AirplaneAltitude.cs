@@ -44,6 +44,12 @@ public class Script_AirplaneAltitude : MonoBehaviour {
 		}
 	}
 
+	public void Construct (float alt) {
+		unactivatedAltitudeAssigned = alt;
+		altitudeAssigned = alt;
+		altitude = alt;
+	}
+
 	void CheckAndCorrectCommand () {
 		if (altitudeAssigned < altitudeMin) {
 			altitudeAssigned = altitudeMin;

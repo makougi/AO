@@ -14,7 +14,7 @@ public class Script_WorldLocationAndId : MonoBehaviour {
 	}
 
 	public Vector3 GetWorldLocation () {
-		if (GetComponent<Script_Airplane> ()) {
+		if (GetComponent<Script_AirplaneMain> ()) {
 			return transform.position;
 		}
 		if (GetComponent<Script_Beacon> ()) {
@@ -24,8 +24,8 @@ public class Script_WorldLocationAndId : MonoBehaviour {
 	}
 
 	public string GetId () {
-		if (GetComponent<Script_Airplane> ()) {
-			return GetComponent<Script_Airplane> ().GetId ();
+		if (GetComponent<Script_AirplaneMain> ()) {
+			return GetComponent<Script_AirplaneMain> ().GetId ();
 		}
 		if (GetComponent<Script_Beacon> ()) {
 			return GetComponent<Script_Beacon> ().GetId ();

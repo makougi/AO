@@ -27,14 +27,14 @@ public class Script_Approach : MonoBehaviour {
 	}
 
 	void OnTriggerEnter (Collider collider) {
-		if (collider.gameObject.GetComponent<Script_Airplane> ()) {
-			collider.gameObject.GetComponent<Script_Airplane> ().setIsInsideApproachArea (true, transform, approachId);
+		if (collider.gameObject.GetComponent<Script_AirplaneMain> ()) {
+			collider.gameObject.GetComponent<Script_AirplaneMain> ().ControlApproachAreaEnterAndExit (true, transform, approachId);
 		}
 	}
 
 	void OnTriggerExit (Collider collider) {
-		if (collider.gameObject.GetComponent<Script_Airplane> ()) {
-			collider.gameObject.GetComponent<Script_Airplane> ().setIsInsideApproachArea (false, transform, approachId);
+		if (collider.gameObject.GetComponent<Script_AirplaneMain> ()) {
+			collider.gameObject.GetComponent<Script_AirplaneMain> ().ControlApproachAreaEnterAndExit (false, transform, approachId);
 		}
 	}
 

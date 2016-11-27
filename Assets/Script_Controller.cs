@@ -26,7 +26,6 @@ public class Script_Controller : MonoBehaviour {
 	public GameObject dIPanel;
 
 	private Script_ScheduledFlight flight;
-	private Script_Colors colors;
 	private Dictionary<int, GameObject> airplanesDictionary;
 	private List<GameObject> airplanesList;
 	private Dictionary<string, GameObject> beaconsDictionary;
@@ -34,7 +33,6 @@ public class Script_Controller : MonoBehaviour {
 	private Dictionary<string, GameObject> approachesDictionary;
 	private List<GameObject> approachesList;
 	private List<int> airplanesTooClose;
-	private bool colorsIsInstantiated;
 	private bool airplaneTextsOffset;
 	private int landed;
 	private int counter;
@@ -46,8 +44,6 @@ public class Script_Controller : MonoBehaviour {
 		approachesDictionary = new Dictionary<string, GameObject> ();
 		approachesList = new List<GameObject> ();
 		schedule.GetComponent<Script_Schedule> ().SetApproaches (approachesList);
-		colors = ScriptableObject.CreateInstance<Script_Colors> ();
-		colorsIsInstantiated = true;
 		airplanesTooClose = new List<int> ();
 		beaconsDictionary = new Dictionary<string, GameObject> ();
 		beaconsList = new List<GameObject> ();
@@ -115,7 +111,7 @@ public class Script_Controller : MonoBehaviour {
 			go.GetComponent<Script_Beacon> ().UpdateBeaconPosition ();
 		}
 		foreach (GameObject go in airplanesList) {
-			go.GetComponent<Script_Airplane> ().UpdateAirplaneUIElementUIPositions ();
+			go.GetComponent<Script_AirplaneMain> ().UpdateAirplaneUIElementUIPositions ();
 		}
 		foreach (GameObject go in approachesList) {
 			go.GetComponent<Script_Approach> ().UpdateUIPosition ();
@@ -125,7 +121,7 @@ public class Script_Controller : MonoBehaviour {
 	public void switchDisplay (string displayName) {
 		activeDisplayName = displayName;
 		foreach (GameObject go in airplanesList) {
-			go.GetComponent<Script_Airplane> ().ChangeDisplayName (displayName);
+			go.GetComponent<Script_AirplaneMain> ().ChangeDisplayName (displayName);
 		}
 		if (displayName == "radar") {
 			ground.SetActive (false);
@@ -157,12 +153,12 @@ public class Script_Controller : MonoBehaviour {
 		if (active) {
 			airplaneTextsOffset = true;
 			foreach (GameObject ap in airplanesList) {
-				ap.GetComponent<Script_Airplane> ().GetAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (true);
+				ap.GetComponent<Script_AirplaneMain> ().GetAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (true);
 			}
 		} else {
 			airplaneTextsOffset = false;
 			foreach (GameObject ap in airplanesList) {
-				ap.GetComponent<Script_Airplane> ().GetAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (false);
+				ap.GetComponent<Script_AirplaneMain> ().GetAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (false);
 			}
 		}
 	}
@@ -252,9 +248,7 @@ public class Script_Controller : MonoBehaviour {
 	void CreateTestFlight () {
 		GameObject ap = Instantiate (airplane);
 		ap.transform.position = new Vector3 (0, 0, 0);
-		ap.GetComponent<Script_Airplane> ().setControllerAndChatTextGameObjects (this.gameObject, gameObjectChatText);
-		ap.GetComponent<Script_AirplaneSpeed> ().setChatText (gameObjectChatText);
-		ap.GetComponent<Script_Airplane> ().SetUpValues (1111, 2000, 240, 0, false, activeDisplayName);
+		ap.GetComponent<Script_AirplaneMain> ().Construct (1111, 2000, 240, 0, false, activeDisplayName, this.gameObject, gameObjectChatText.GetComponent<Script_ChatText> (), GetComponent<Script_ColorsInterface> ().PickARandomColor ());
 		ap.transform.eulerAngles = new Vector3 (0, 0, 0);
 		airplanesDictionary.Add (1111, ap);
 		airplanesList.Add (ap);
@@ -266,23 +260,10 @@ public class Script_Controller : MonoBehaviour {
 		if (flight) {
 			GameObject ap = Instantiate (airplane);
 			ap.transform.position = new Vector3 (flight.GetEntrypointPosition ().x, 0, flight.GetEntrypointPosition ().y);
-			ap.GetComponent<Script_Airplane> ().setControllerAndChatTextGameObjects (this.gameObject, gameObjectChatText);
-			ap.GetComponent<Script_Airplane> ().SetUpValues (flight.GetId (), flight.GetAltitude (), flight.GetSpeed (), flight.GetHeading (), flight.GetTakeoff (), activeDisplayName);
-			ap.GetComponent<Script_AirplaneSpeed> ().setChatText (gameObjectChatText);
+			ap.GetComponent<Script_AirplaneMain> ().Construct (flight.GetId (), flight.GetAltitude (), flight.GetSpeed (), flight.GetHeading (), flight.GetTakeoff (), activeDisplayName, this.gameObject, gameObjectChatText.GetComponent<Script_ChatText> (), GetComponent<Script_ColorsInterface> ().PickARandomColor ());
 			airplanesDictionary.Add (flight.GetId (), ap);
 			airplanesList.Add (ap);
 		}
-	}
-
-	public string PickARandomColor () {
-		if (!colorsIsInstantiated) {
-			CreateColorsInstance ();
-		}
-		return colors.PickARandomColor ();
-	}
-
-	void CreateColorsInstance () {
-		colors = ScriptableObject.CreateInstance<Script_Colors> ();
 	}
 
 	public bool GetAirplaneTextsOffset () {

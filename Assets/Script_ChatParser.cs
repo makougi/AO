@@ -8,7 +8,8 @@ public class Script_ChatParser : MonoBehaviour {
 	public GameObject gameObjectChatText;
 
 	private Script_ChatText chat;
-	private Script_Airplane sAp;
+	private Script_AirplaneMain sApMain;
+	private Script_AirplaneChat sApChat;
 	private Script_AirplaneAltitude sApAltitude;
 	private Script_AirplaneSpeed sApSpeed;
 	private Script_AirplaneHeading sApHeading;
@@ -60,20 +61,21 @@ public class Script_ChatParser : MonoBehaviour {
 				if (airplanesDictionary.ContainsKey (id)) { // if there is an airplane with this id word[0]
 					airplaneId = id;
 					GameObject ap = airplanesDictionary[id];
-					sAp = ap.GetComponent<Script_Airplane> ();
+					sApMain = ap.GetComponent<Script_AirplaneMain> ();
+					sApChat = ap.GetComponent<Script_AirplaneChat> ();
 					sApAltitude = ap.GetComponent<Script_AirplaneAltitude> ();
 					sApSpeed = ap.GetComponent<Script_AirplaneSpeed> ();
 					sApHeading = ap.GetComponent<Script_AirplaneHeading> ();
 				} else {
 					airplaneId = 0;
-					sAp = null;
+					sApChat = null;
 					sApAltitude = null;
 					sApSpeed = null;
 					sApHeading = null;
 				}
 				if (words.Length == 1) {
 					if (airplaneId != 0) {
-						sAp.AddToChatList ("Tower");
+						sApChat.AddToChatList ("Tower");
 					}
 				} else {
 					chat.AddComma ();
@@ -81,29 +83,31 @@ public class Script_ChatParser : MonoBehaviour {
 				for (int i = 1; i < words.Length; i++) {
 					if (words[i].Length > 0) {
 						if (words[i][0] == 'a') { // if first character is a
-							ParseAndAssignAltitude (sAp, sApAltitude, words[i].Substring (1));
+							ParseAndAssignAltitude (sApChat, sApAltitude, words[i].Substring (1));
 						} else if (words[i][0] == 's') { // if first character is s
-							ParseAndAssignSpeed (sAp, sApSpeed, words[i].Substring (1));
+							ParseAndAssignSpeed (sApChat, sApSpeed, words[i].Substring (1));
 						} else if (words[i][0] == 'd') { // if first character is d
-							ParseAndAssignHeading (sAp, sApHeading, words[i].Substring (1));
+							ParseAndAssignHeading (sApChat, sApHeading, words[i].Substring (1));
 						} else if (words[i][0] == 'f') {
-							ParseAndAssignHeadingToBeacon (sAp, sApHeading, words[i].Substring (1));
+							ParseAndAssignHeadingToBeacon (sApChat, sApHeading, words[i].Substring (1));
 						} else if (words[i][0] == '+') {
-							ParseAndAssignHeadingToBeaconAndHoldingPattern (sAp, sApHeading, words[i].Substring (1));
-						} else if (words[i].Substring (0, 5) == "-land") {
-							GrantLandingClearance (sAp, words[i].Substring (5));
+							ParseAndAssignHeadingToBeaconAndHoldingPattern (sApChat, sApHeading, words[i].Substring (1));
 						} else if (words[i] == "-fuel") {
-							RequestFuelInfo (sAp, sApSpeed);
+							RequestFuelInfo (sApChat, sApSpeed);
 						} else if (words[i] == "-abort") {
-							Abort (sAp);
-							sAp.OverrideChatList ("aborting");
+							Abort (sApMain);
+							sApChat.OverrideChatList ("aborting");
 							discardCommands = true;
 						} else if (words[i] == "-takeoff") {
-							GrantTakeoffClearance (sAp, sApSpeed);
+							GrantTakeoffClearance (sApMain, sApChat, sApSpeed);
+						} else if (words[i].Length >= 5) {
+							if (words[i].Substring (0, 5) == "-land") {
+								GrantLandingClearance (sApMain, sApChat, words[i].Substring (5));
+							} else {
+								ProcessInvalidCommand (sApChat);
+							}
 						} else {
-							chat.AddText ("...");
-							sAp.OverrideChatList ("say again");
-							discardCommands = true;
+							ProcessInvalidCommand (sApChat);
 						}
 					}
 				}
@@ -114,18 +118,23 @@ public class Script_ChatParser : MonoBehaviour {
 		}
 	}
 
+	private void ProcessInvalidCommand (Script_AirplaneChat apChatScript) {
+		chat.AddText ("...");
+		apChatScript.OverrideChatList ("say again");
+		discardCommands = true;
+	}
+
 	private void RequestStandbyCheckin () {
 		chat.AddText ("Flights ready for takeoff please check in");
 		foreach (GameObject go in airplanesList) {
-			sAp = go.GetComponent<Script_Airplane> ();
-			if (sAp.GetStandby ()) {
-				sAp.OverrideChatIDString ();
-				sAp.AddToChatList (sAp.GetId () + " ready for takeoff");
+			if (go.GetComponent<Script_AirplaneMain> ().GetStandby ()) {
+				go.GetComponent<Script_AirplaneChat> ().OverrideChatIDString ();
+				go.GetComponent<Script_AirplaneChat> ().AddToChatList (go.GetComponent<Script_AirplaneMain> ().GetId () + " ready for takeoff");
 			}
 		}
 	}
 
-	void ParseAndAssignAltitude (Script_Airplane airplaneScript, Script_AirplaneAltitude altitudeScript, string word) {
+	void ParseAndAssignAltitude (Script_AirplaneChat airplaneChatScript, Script_AirplaneAltitude altitudeScript, string word) {
 		chat.AddText ("altitude to " + word);
 		if (!discardCommands) {
 			int dflt = 0;
@@ -134,21 +143,21 @@ public class Script_ChatParser : MonoBehaviour {
 				if (altitudeScript) {
 					if (altitudeScript.CheckCommand (alt * 100)) {
 						altitudeScript.CommandAltitude (alt * 100); // assign altitude				
-						airplaneScript.AddToChatList ("altitude to " + alt.ToString ());
+						airplaneChatScript.AddToChatList ("altitude to " + alt.ToString ());
 					} else {
-						airplaneScript.OverrideChatList ("unable, invalid altitude");
+						airplaneChatScript.OverrideChatList ("unable, invalid altitude");
 						discardCommands = true;
 					}
 				}
 			} else {
-				airplaneScript.OverrideChatList ("say again");
+				airplaneChatScript.OverrideChatList ("say again");
 				discardCommands = true;
 			}
 		}
 
 	}
 
-	void ParseAndAssignSpeed (Script_Airplane airplaneScript, Script_AirplaneSpeed speedScript, string word) {
+	void ParseAndAssignSpeed (Script_AirplaneChat airplaneChatScript, Script_AirplaneSpeed speedScript, string word) {
 		chat.AddText ("speed to " + word);
 		if (!discardCommands) {
 			int dflt = 0;
@@ -157,48 +166,48 @@ public class Script_ChatParser : MonoBehaviour {
 				if (speedScript) {
 					if (speedScript.CheckCommand (spd)) {
 						speedScript.CommandSpeed (spd); // assign speed										
-						airplaneScript.AddToChatList ("speed to " + spd.ToString ());
+						airplaneChatScript.AddToChatList ("speed to " + spd.ToString ());
 					} else {
-						airplaneScript.OverrideChatList ("unable, invalid speed");
+						airplaneChatScript.OverrideChatList ("unable, invalid speed");
 						discardCommands = true;
 					}
 				}
 			} else {
-				airplaneScript.OverrideChatList ("say again");
+				airplaneChatScript.OverrideChatList ("say again");
 				discardCommands = true;
 			}
 		}
 	}
 
-	void ParseAndAssignHeading (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string word) {
+	void ParseAndAssignHeading (Script_AirplaneChat airplaneChatScript, Script_AirplaneHeading headingScript, string word) {
 		if (word.Length > 0) {
 			if (word[0] == 'l') {
 				chat.AddText ("turn left heading");
-				if (!discardCommands && airplaneScript) {
-					airplaneScript.AddToChatList ("left to");
+				if (!discardCommands && airplaneChatScript) {
+					airplaneChatScript.AddToChatList ("left to");
 				}
-				ParseAndAssignHeadingNormalOrLeftOrRight (sAp, headingScript, word.Substring (1), 1);
+				ParseAndAssignHeadingNormalOrLeftOrRight (sApChat, headingScript, word.Substring (1), 1);
 			} else if (word[0] == 'r') {
 				chat.AddText ("turn right heading ");
-				if (!discardCommands && airplaneScript) {
-					airplaneScript.AddToChatList ("right to");
+				if (!discardCommands && airplaneChatScript) {
+					airplaneChatScript.AddToChatList ("right to");
 				}
-				ParseAndAssignHeadingNormalOrLeftOrRight (sAp, headingScript, word.Substring (1), 2);
+				ParseAndAssignHeadingNormalOrLeftOrRight (sApChat, headingScript, word.Substring (1), 2);
 			} else {
 				chat.AddText ("heading to");
-				if (!discardCommands && airplaneScript) {
-					airplaneScript.AddToChatList ("heading to");
+				if (!discardCommands && airplaneChatScript) {
+					airplaneChatScript.AddToChatList ("heading to");
 				}
-				ParseAndAssignHeadingNormalOrLeftOrRight (sAp, headingScript, word, 0);
+				ParseAndAssignHeadingNormalOrLeftOrRight (sApChat, headingScript, word, 0);
 			}
 		} else {
 			chat.AddText ("...");
-			airplaneScript.OverrideChatList ("say again");
+			airplaneChatScript.OverrideChatList ("say again");
 			discardCommands = true;
 		}
 	}
 
-	void ParseAndAssignHeadingNormalOrLeftOrRight (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string word, int normalOrLeftOrRight) {
+	void ParseAndAssignHeadingNormalOrLeftOrRight (Script_AirplaneChat airplaneChatScript, Script_AirplaneHeading headingScript, string word, int normalOrLeftOrRight) {
 		chat.AddText (word);
 		if (!discardCommands) {
 			int dflt = 0;
@@ -207,89 +216,92 @@ public class Script_ChatParser : MonoBehaviour {
 				if (headingScript) {
 					if (headingScript.CheckCommand (hdg)) {
 						headingScript.CommandHeading (hdg, normalOrLeftOrRight); // assign heading
-						airplaneScript.AddToChatList (hdg.ToString ());
+						airplaneChatScript.AddToChatList (hdg.ToString ());
 					} else {
-						airplaneScript.AddToChatList ("unable, invalid heading");
+						airplaneChatScript.AddToChatList ("unable, invalid heading");
 						discardCommands = true;
 					}
 				}
 			} else {
-				airplaneScript.OverrideChatList ("say again");
+				airplaneChatScript.OverrideChatList ("say again");
 				discardCommands = true;
 			}
 		}
 	}
 
-	void ParseAndAssignHeadingToBeacon (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string word) {
+	void ParseAndAssignHeadingToBeacon (Script_AirplaneChat airplaneChatScript, Script_AirplaneHeading headingScript, string word) {
 		string beaconId = word.ToUpperInvariant ();
 		chat.AddText ("heading to " + beaconId);
 		if (!discardCommands) {
 			if (headingScript) {
 				if (beaconsDictionary.ContainsKey (beaconId)) {
 					headingScript.CommandBeaconHeading (beaconsDictionary[beaconId].GetComponent<Script_Beacon> ().GetWorldPosition ());
-					airplaneScript.AddToChatList ("heading to " + ConvertLettersToICAOPronounciation (beaconId));
+					airplaneChatScript.AddToChatList ("heading to " + ConvertLettersToICAOPronounciation (beaconId));
 				} else {
-					airplaneScript.AddToChatList ("unable, invalid beacon id");
+					airplaneChatScript.AddToChatList ("unable, invalid beacon id");
 					discardCommands = true;
 				}
 			}
 		}
 	}
 
-	void ParseAndAssignHeadingToBeaconAndHoldingPattern (Script_Airplane airplaneScript, Script_AirplaneHeading headingScript, string word) {
+	void ParseAndAssignHeadingToBeaconAndHoldingPattern (Script_AirplaneChat airplaneChatScript, Script_AirplaneHeading headingScript, string word) {
 		string beaconId = word.ToUpperInvariant ();
 		chat.AddText ("holding pattern at " + beaconId);
 		if (!discardCommands) {
 			if (headingScript) {
 				if (beaconsDictionary.ContainsKey (beaconId)) {
 					headingScript.CommandHoldingPattern (beaconsDictionary[beaconId].GetComponent<Script_Beacon> ().GetWorldPosition ());
-					airplaneScript.AddToChatList ("holding at " + ConvertLettersToICAOPronounciation (beaconId));
+					airplaneChatScript.AddToChatList ("holding at " + ConvertLettersToICAOPronounciation (beaconId));
 				} else {
-					airplaneScript.AddToChatList ("unable, invalid beacon id");
+					airplaneChatScript.AddToChatList ("unable, invalid beacon id");
 					discardCommands = true;
 				}
 			}
 		}
 	}
 
-	void GrantLandingClearance (Script_Airplane airplaneScript, string wrd) {
+	void GrantLandingClearance (Script_AirplaneMain airplaneMainScript, Script_AirplaneChat airplaneChatScript, string wrd) {
 		string word = wrd.ToUpperInvariant ();
 		chat.AddText ("cleared to land " + word);
 		if (approachesDictionary.ContainsKey (word)) {
-			airplaneScript.GrantLandingClearance (word);
-			if (airplaneScript.CheckIfReadyToLand () == false) {
-				airplaneScript.AddToChatList ("cleared to land " + word);
+			airplaneMainScript.GrantLandingClearance (word);
+			if (airplaneMainScript.CheckIfReadyToLand () == false) {
+				airplaneChatScript.AddToChatList ("cleared to land " + word);
 			}
+		} else if (wrd == "") {
+			airplaneChatScript.AddToChatList ("requesting approach id");
+			discardCommands = true;
 		} else {
-			airplaneScript.AddToChatList ("unable, invalid approach id");
+			airplaneChatScript.AddToChatList ("unable, invalid approach id");
 			discardCommands = true;
 		}
 	}
 
-	void RequestFuelInfo (Script_Airplane airplaneScript, Script_AirplaneSpeed speedScript) {
+	void RequestFuelInfo (Script_AirplaneChat airplaneChatScript, Script_AirplaneSpeed speedScript) {
 		chat.AddText ("report fuel level");
 		if (!discardCommands) {
-			airplaneScript.AddToChatList ("fuel level " + ((int)(speedScript.getFuel () / 100)) * 100);
+			airplaneChatScript.AddToChatList ("fuel level " + ((int)(speedScript.getFuel () / 100)) * 100);
 		}
 	}
 
-	private void GrantTakeoffClearance (Script_Airplane airplaneScript, Script_AirplaneSpeed speedScript) {
+	private void GrantTakeoffClearance (Script_AirplaneMain airplaneMainScript, Script_AirplaneChat airplaneChatScript, Script_AirplaneSpeed speedScript) {
 		chat.AddText ("cleared to takeoff");
-		if (airplaneScript.GetTakeoff ()) {
-			airplaneScript.GrantTakeoffClearance ();
+		if (airplaneMainScript.GetTakeoff ()) {
+			airplaneMainScript.GrantTakeoffClearance ();
 			if (speedScript.GetSpeedAssigned () < 140) {
 				speedScript.CommandSpeed (240);
 			}
-			airplaneScript.AddToChatList ("cleared to takeoff");
+			airplaneChatScript.AddToChatList ("cleared to takeoff");
 		} else {
-			airplaneScript.AddToChatList ("already airborne");
+			airplaneChatScript.AddToChatList ("already airborne");
 			discardCommands = true;
 		}
 	}
 
-	void Abort (Script_Airplane airplaneScript) {
+	void Abort (Script_AirplaneMain airplaneMainScript) {
 		chat.AddText ("abort");
-		airplaneScript.Abort ();
+		airplaneMainScript.Abort ();
 	}
 
 	private void SetupICAOPronounciations () {

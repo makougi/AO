@@ -11,17 +11,17 @@ public class Script_Colors : ScriptableObject {
 		SetUpColors ();
 		isSetUp = true;
 	}
-	
+
 	// Update is called once per frame
 	void Update () {
-	
+
 	}
 
 	public string PickARandomColor () {
 		if (!isSetUp) {
 			SetUpColors ();
 		}
-		return "<color=" + colors [UnityEngine.Random.Range (0, colors.Length)] + ">";
+		return "<color=" + colors[UnityEngine.Random.Range (0, colors.Length)] + ">";
 	}
 
 	void SetUpColors () {
