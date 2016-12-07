@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class Script_IDParser : MonoBehaviour {
 
-	public GameObject MainCamera;
-
+	private GameObject mainCamera;
+	private List<List<GameObject>> targets;
 	private GameObject target;
 	private bool toggle;
 
@@ -19,12 +19,17 @@ public class Script_IDParser : MonoBehaviour {
 
 	}
 
+	public void Construct (GameObject mainCameraGO, List<List<GameObject>> targetsGO) {
+		mainCamera = mainCameraGO;
+		targets = targetsGO;
+	}
+
 	public void ToggleIDTargetOnOff (bool tggle) {
 		toggle = tggle;
 		if (toggle) {
-			MainCamera.GetComponent<Script_MainCamera> ().SetTargetAndResetOffset (target);
+			mainCamera.GetComponent<Script_MainCamera> ().SetTargetAndResetOffset (target);
 		} else {
-			MainCamera.GetComponent<Script_MainCamera> ().SetTargetAndResetOffset (null);
+			mainCamera.GetComponent<Script_MainCamera> ().SetTargetAndResetOffset (null);
 		}
 	}
 
@@ -34,7 +39,7 @@ public class Script_IDParser : MonoBehaviour {
 			ToggleIDTargetOnOff (toggle);
 			return false;
 		} else {
-			foreach (List<GameObject> golist in GetComponent<Script_Controller> ().GetTargets ()) {
+			foreach (List<GameObject> golist in targets) {
 				foreach (GameObject go in golist) {
 					if (targetId == go.GetComponent<Script_WorldLocationAndId> ().GetId ()) {
 						target = go;

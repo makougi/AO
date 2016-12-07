@@ -21,7 +21,7 @@ public class Script_AirplaneDots : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		airplaneMainDot = Instantiate (airplaneMainDot);
-		airplaneMainDot.transform.SetParent (GetComponent<Script_AirplaneMain> ().GetController ().GetComponent<Script_Controller> ().GetDIPanel ().transform);
+		airplaneMainDot.transform.SetParent (GetComponent<Script_AirplaneMain> ().GetController ().GetComponent<Script_ControllerMain> ().GetDIPanel ().transform);
 		airplaneMainDot.transform.position = new Vector3 (Camera.main.WorldToScreenPoint (transform.position).x, Camera.main.WorldToScreenPoint (transform.position).y, 0);
 		airplaneDotsListSize = 5;
 		airplaneDotsListIndex = 0;
@@ -36,7 +36,7 @@ public class Script_AirplaneDots : MonoBehaviour {
 		airplaneDots = new List<GameObject> (positionsListSize - 2);
 		while (airplaneDots.Count < airplaneDotsListSize) {
 			GameObject ad = Instantiate (airplaneDot);
-			ad.transform.SetParent (GetComponent<Script_AirplaneMain> ().GetController ().GetComponent<Script_Controller> ().GetDIPanel ().transform);
+			ad.transform.SetParent (GetComponent<Script_AirplaneMain> ().GetController ().GetComponent<Script_ControllerMain> ().GetDIPanel ().transform);
 			ad.GetComponent<Script_AirplaneDot> ().UpdateWorldPosition (transform.position);
 			ad.GetComponent<Script_AirplaneDot> ().UpdatePosition ();
 			airplaneDots.Add (ad);

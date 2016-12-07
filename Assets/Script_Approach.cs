@@ -16,7 +16,7 @@ public class Script_Approach : MonoBehaviour {
 
 	public void RunSecondaryStart (GameObject controller) {
 		approachText = Instantiate (approachText);
-		approachText.transform.SetParent (controller.GetComponent<Script_Controller> ().GetDIPanel ().transform);
+		approachText.transform.SetParent (controller.GetComponent<Script_ControllerMain> ().GetDIPanel ().transform);
 		approachText.GetComponent<Text> ().text = approachId;
 		UpdateUIPosition ();
 	}

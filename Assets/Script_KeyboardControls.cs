@@ -3,18 +3,21 @@ using System.Collections;
 
 public class Script_KeyboardControls : MonoBehaviour {
 
-	public GameObject mainCamera;
-
+	private GameObject mainCamera;
 	private float mainCameraMoveSpeed;
 
 	// Use this for initialization
 	void Start () {
-		mainCameraMoveSpeed = 30;
 	}
 
 	// Update is called once per frame
 	void Update () {
 		UpdateMainCamera ();
+	}
+
+	public void Construct (GameObject mainCameraGO) {
+		mainCamera = mainCameraGO;
+		mainCameraMoveSpeed = 30;
 	}
 
 	void UpdateMainCamera () {
@@ -36,7 +39,7 @@ public class Script_KeyboardControls : MonoBehaviour {
 			if (Input.GetKey (KeyCode.RightArrow)) {
 				mainCamera.GetComponent<Script_MainCamera> ().AddToOffset (new Vector2 (mainCameraMoveSpeed * Time.deltaTime, 0));
 			}
-			GetComponent<Script_Controller> ().UpdateUIElementPositions ();
+			GetComponent<Script_ControllerMain> ().UpdateUIElementPositions ();
 		}
 	}
 }

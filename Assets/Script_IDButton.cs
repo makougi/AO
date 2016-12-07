@@ -13,7 +13,7 @@ public class Script_IDButton : MonoBehaviour {
 		GetComponent<Image> ().color = new Color32 (185, 210, 235, 255);
 		toggle = true;
 		GetComponent<Button> ().onClick.AddListener (() => {
-			ToggleOffset ();
+			ToggleOnOff ();
 		});
 	}
 
@@ -22,7 +22,7 @@ public class Script_IDButton : MonoBehaviour {
 
 	}
 
-	void ToggleOffset () {
+	void ToggleOnOff () {
 		controller.GetComponent<Script_IDParser> ().ToggleIDTargetOnOff (toggle);
 		toggle = !toggle;
 		if (toggle) {

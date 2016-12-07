@@ -20,17 +20,22 @@ public class Script_AirplaneText : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		offsetDefault = new Vector3 (0, -30, 0);
-		offset = offsetDefault;
-		lineImage = Instantiate (lineImage);
-		transform.SetParent (controller.GetComponent<Script_Controller> ().GetDIPanel ().transform);
-		lineImage.transform.SetParent (controller.GetComponent<Script_Controller> ().GetDIPanel ().transform);
-		RandomizeOffset (controller.GetComponent<Script_Controller> ().GetAirplaneTextsOffset ());
 	}
 
 	// Update is called once per frame
 	void Update () {
 
+	}
+
+	public void Construct (int iDInt, GameObject dIPanelGO, bool airplaneTextsOffsetBool, bool standbyBool) {
+		airplaneId = iDInt;
+		offsetDefault = new Vector3 (0, -30, 0);
+		offset = offsetDefault;
+		lineImage = Instantiate (lineImage);
+		transform.SetParent (dIPanelGO.transform);
+		lineImage.transform.SetParent (dIPanelGO.transform);
+		RandomizeOffset (airplaneTextsOffsetBool);
+		this.gameObject.SetActive (!standbyBool);
 	}
 
 	public void UpdateUIPosition (Vector3 mainDotPosition) {
@@ -87,10 +92,6 @@ public class Script_AirplaneText : MonoBehaviour {
 		return "000";
 	}
 
-	public void SetAirplaneId (int id) {
-		airplaneId = id;
-	}
-
 	public void RandomizeOffset (bool active) {
 		if (active) {
 			int offsetAngle = UnityEngine.Random.Range (0, 360);
@@ -106,10 +107,6 @@ public class Script_AirplaneText : MonoBehaviour {
 			transform.position = airplaneMainDotUIPosition + offset;
 			UpdatePosition ();
 		}
-	}
-
-	public void setController (GameObject contr) {
-		controller = contr;
 	}
 
 	private void drawLine (Vector3 pointA, Vector3 pointB, float lineWidth) { // http://answers.unity3d.com/questions/865927/draw-a-2d-line-in-the-new-ui.html

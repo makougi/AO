@@ -23,7 +23,7 @@ public class Script_OffsetButton : MonoBehaviour {
 	}
 
 	void ToggleOffset () {
-		controller.GetComponent<Script_Controller> ().toggleAirplaneTextsOffset (toggle);
+		controller.GetComponent<Script_ControllerMain> ().toggleAirplaneTextsOffset (toggle);
 		toggle = !toggle;
 		if (toggle) {
 			GetComponent<Image> ().color = new Color32 (185, 210, 235, 255);

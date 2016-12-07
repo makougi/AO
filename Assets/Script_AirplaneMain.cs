@@ -19,9 +19,9 @@ public class Script_AirplaneMain : MonoBehaviour {
 	private bool readyForDestroy;
 	private bool abort;
 	private int id;
-	private int timeCounter;
+	private int timeCounterForUIElementsUpdate;
 	private float speedMapScaleFactor;
-	private float delayedCommandTime;
+	private float timeCounterForDelayedCommands;
 	private bool takeoff;
 	private int takeoffHeading;
 	private bool standby;
@@ -30,101 +30,52 @@ public class Script_AirplaneMain : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		airplaneSprite = Instantiate (airplaneSprite);
-		airplaneAltitudeScript = GetComponent<Script_AirplaneAltitude> ();
-		airplaneSpeedScript = GetComponent<Script_AirplaneSpeed> ();
-		airplaneHeadingScript = GetComponent<Script_AirplaneHeading> ();
-		airplaneDotsScript = GetComponent<Script_AirplaneDots> ();
-		airplaneLandingScript = GetComponent<Script_AirplaneLanding> ();
-		airplaneChatScript = GetComponent<Script_AirplaneChat> ();
-		speedMapScaleFactor = 0.000514444444f; // 1 kts = 0.000514444444 km / s
 
-		airplaneText = Instantiate (airplaneText);
-		if (standby) {
-			airplaneText.SetActive (false);
-		} else {
-			airplaneText.SetActive (true);
-		}
-		if (id != 0) {
-			airplaneText.GetComponent<Script_AirplaneText> ().SetAirplaneId (id);
-			airplaneText.GetComponent<Script_AirplaneText> ().setController (controller);
-		}
-		while (timeCounter < Time.time) {
-			timeCounter += 3;
-		}
 	}
 
 	// Update is called once per frame
 	void Update () {
 		if (takeoff) {
-			if (clearedToTakeoff && Time.time > delayedCommandTime) {
-				standby = false;
-			}
-			if (standby) {
-				airplaneSpeedScript.SetSpeed (0);
-				airplaneAltitudeScript.SetAltitude (0);
-				airplaneHeadingScript.SetHeading (takeoffHeading);
-			} else {
-				GetComponent<Collider> ().enabled = true;
-				if (displayName == "radar") {
-					airplaneDotsScript.SetActive (true);
-					airplaneText.SetActive (true);
-				}
-				if (airplaneSpeedScript.GetSpeed () < 145) {
-					airplaneAltitudeScript.SetAltitude (0);
-					airplaneHeadingScript.SetHeading (takeoffHeading);
-				} else {
-					airplaneAltitudeScript.SetAltitudeMin (1000);
-					airplaneAltitudeScript.CommandAltitudeWithoutDelay (airplaneAltitudeScript.GetAltitudeAssigned ());
-					airplaneSpeedScript.SetSpeedMin (140);
-					takeoff = false;
-				}
-			}
+			ProcessTakeoff ();
 		}
 		if (readyForDestroy) {
-			if (Time.time > delayedCommandTime) {
+			if (Time.time > timeCounterForDelayedCommands) {
 				DestroyThisEntity ();
 			}
 		}
 
 		if (abort) {
-			if (Time.time > delayedCommandTime) {
-				airplaneLandingScript.Abort ();
-				airplaneAltitudeScript.Abort (takeoff);
-				airplaneSpeedScript.Abort (takeoff);
-				airplaneHeadingScript.Abort ();
-				abort = false;
+			if (Time.time > timeCounterForDelayedCommands) {
+				ProcessAbort ();
 			}
 		}
-
 		UpdatePosition ();
-		if (Time.time > timeCounter) {
-			UpdateAirplaneUIElements ();
-			timeCounter += 3;
-		}
-		airplaneSprite.transform.position = transform.position;
-		airplaneSprite.transform.eulerAngles = new Vector3 (90, 0, transform.eulerAngles.y * -1);
 	}
 
 	void OnTriggerEnter (Collider collider) {
 		Script_AirplaneMain otherAirplaneMainScript = collider.gameObject.GetComponent<Script_AirplaneMain> ();
 		if (otherAirplaneMainScript) {
 			if (otherAirplaneMainScript.GetAltitude () < GetAltitude () + 900 && otherAirplaneMainScript.GetAltitude () > GetAltitude () - 900) {
-				controller.GetComponent<Script_Controller> ().ProcessAirplanesTooClose (id);
+				controller.GetComponent<Script_ControllerMain> ().ProcessAirplanesTooClose (id);
 			}
 		}
 	}
 
-	public void Construct (int airplaneId, int airplaneAltitude, int airplaneSpeed, int airplaneHeading, bool airplaneTakeoff, string dispName, GameObject controllerGameObject, Script_ChatText chatTextScript, string idColr) {
-		SetupVariablesOfThisScripts (dispName, airplaneId, airplaneTakeoff, airplaneHeading, controllerGameObject);
-		ConstructOtherScriptsOfThisGameObject (airplaneAltitude, airplaneSpeed, airplaneHeading, idColr, chatTextScript);
-		ConstructAirplaneTextGameObject (id, controllerGameObject);
-		transform.eulerAngles = new Vector3 (0, airplaneHeading, 0);
-		if (airplaneTakeoff) {
-			RunIfConstructTakeoffTrue (airplaneHeading);
+	public void Construct (int iDInt, int altitudeInt, int speedInt, int headingInt, bool takeoffBool, string dispNameString, GameObject controllerGO, Script_ChatText chatTextScript, string iDColorString, GameObject dIPanelGO, bool airplaneTextOffsetBool) {
+		airplaneSprite = Instantiate (airplaneSprite);
+		speedMapScaleFactor = 0.000514444444f; // 1 kts = 0.000514444444 km / s
+		SetupTimeCounterForUIElementsUpdate ();
+		SetupAirplaneScripts ();
+		SetupVariablesOfThisScripts (dispNameString, iDInt, takeoffBool, headingInt, controllerGO);
+		ConstructOtherScriptsOfThisGameObject (altitudeInt, speedInt, headingInt, iDColorString, chatTextScript);
+		SetupAirplaneTextGameObject (iDInt, dIPanelGO, airplaneTextOffsetBool, takeoffBool);
+		transform.eulerAngles = new Vector3 (0, headingInt, 0);
+		if (takeoffBool) {
+			RunIfConstructTakeoffTrue (headingInt);
 		} else {
-			RunIfConstructTakeoffFalse (dispName);
+			RunIfConstructTakeoffFalse (dispNameString);
 		}
+		ChangeDisplayName (dispNameString);
 	}
 
 	public void ChangeDisplayName (string dn) {
@@ -140,9 +91,13 @@ public class Script_AirplaneMain : MonoBehaviour {
 			}
 
 		} else if (dn == "satellite") {
-			airplaneSprite.SetActive (true);
 			airplaneDotsScript.SetActive (false);
 			airplaneText.SetActive (false);
+			if (standby) {
+				airplaneSprite.SetActive (false);
+			} else {
+				airplaneSprite.SetActive (true);
+			}
 		}
 	}
 
@@ -155,7 +110,7 @@ public class Script_AirplaneMain : MonoBehaviour {
 
 	public void Abort () {
 		abort = true;
-		delayedCommandTime = Time.time + UnityEngine.Random.Range (1.5f, 3f);
+		timeCounterForDelayedCommands = Time.time + UnityEngine.Random.Range (1.5f, 3f);
 	}
 
 	public void GrantLandingClearance (string clearedApprchId) {
@@ -171,12 +126,12 @@ public class Script_AirplaneMain : MonoBehaviour {
 	}
 
 	public void ActivateOutOfFuelMode () {
-		controller.GetComponent<Script_Controller> ().ProcessOutOfFuel (id);
+		controller.GetComponent<Script_ControllerMain> ().ProcessOutOfFuel (id);
 		airplaneAltitudeScript.ActivateGlideMode ();
 	}
 
 	public void GrantTakeoffClearance () {
-		delayedCommandTime = Time.time + UnityEngine.Random.Range (8, 16);
+		timeCounterForDelayedCommands = Time.time + UnityEngine.Random.Range (8, 16);
 		clearedToTakeoff = true;
 	}
 
@@ -193,12 +148,12 @@ public class Script_AirplaneMain : MonoBehaviour {
 	}
 
 	public void AddLanded () {
-		controller.GetComponent<Script_Controller> ().addLanded ();
+		controller.GetComponent<Script_ControllerMain> ().addLanded ();
 	}
 
 	public void ActivateReadyForDestroy () {
 		readyForDestroy = true;
-		delayedCommandTime = Time.time + 3;
+		timeCounterForDelayedCommands = Time.time + 3;
 	}
 
 	public void ActivateBrakingMode () {
@@ -249,7 +204,51 @@ public class Script_AirplaneMain : MonoBehaviour {
 		airplaneSpeedScript.SetSpeedMin (spd);
 	}
 
+	private void ProcessTakeoff () {
+		if (clearedToTakeoff && Time.time > timeCounterForDelayedCommands) {
+			standby = false;
+		}
+		if (standby) {
+			airplaneSpeedScript.SetSpeed (0);
+			airplaneAltitudeScript.SetAltitude (0);
+			airplaneHeadingScript.SetHeading (takeoffHeading);
+		} else {
+			GetComponent<Collider> ().enabled = true;
+			if (displayName == "radar") {
+				airplaneDotsScript.SetActive (true);
+				airplaneText.SetActive (true);
+			}
+			if (airplaneSpeedScript.GetSpeed () < 145) {
+				airplaneAltitudeScript.SetAltitude (0);
+				airplaneHeadingScript.SetHeading (takeoffHeading);
+			} else {
+				airplaneAltitudeScript.SetAltitudeMin (1000);
+				airplaneAltitudeScript.CommandAltitudeWithoutDelay (airplaneAltitudeScript.GetAltitudeAssigned ());
+				airplaneSpeedScript.SetSpeedMin (140);
+				takeoff = false;
+			}
+		}
+	}
+
+	private void ProcessAbort () {
+		airplaneLandingScript.Abort ();
+		airplaneAltitudeScript.Abort (takeoff);
+		airplaneSpeedScript.Abort (takeoff);
+		airplaneHeadingScript.Abort ();
+		abort = false;
+	}
+
 	private void UpdatePosition () {
+		UpdateWorldPosition ();
+		if (Time.time > timeCounterForUIElementsUpdate) {
+			UpdateAirplaneUIElements ();
+			timeCounterForUIElementsUpdate += 3;
+		}
+		airplaneSprite.transform.position = transform.position;
+		airplaneSprite.transform.eulerAngles = new Vector3 (90, 0, transform.eulerAngles.y * -1);
+	}
+
+	private void UpdateWorldPosition () {
 		transform.position += transform.forward * Time.deltaTime * airplaneSpeedScript.GetSpeed () * speedMapScaleFactor;
 	}
 
@@ -264,7 +263,7 @@ public class Script_AirplaneMain : MonoBehaviour {
 	}
 
 	private void DestroyThisEntity () {
-		controller.GetComponent<Script_Controller> ().RemoveAirplane (id);
+		controller.GetComponent<Script_ControllerMain> ().RemoveAirplane (id);
 		airplaneText.GetComponent<Script_AirplaneText> ().DestoryLineImage ();
 		Destroy (airplaneText.gameObject);
 		airplaneDotsScript.DestroyDots ();
@@ -277,11 +276,9 @@ public class Script_AirplaneMain : MonoBehaviour {
 		return (int)Math.Round (altitude * 0.01f);
 	}
 
-	private void ConstructAirplaneTextGameObject (int id, GameObject controllerGameObject) {
-		if (airplaneText.activeInHierarchy) {
-			airplaneText.GetComponent<Script_AirplaneText> ().SetAirplaneId (id);
-			airplaneText.GetComponent<Script_AirplaneText> ().setController (controllerGameObject);
-		}
+	private void SetupAirplaneTextGameObject (int idInt, GameObject dIPanelGO, bool airplaneTextOffsetBool, bool standbyBool) {
+		airplaneText = Instantiate (airplaneText);
+		airplaneText.GetComponent<Script_AirplaneText> ().Construct (idInt, dIPanelGO, airplaneTextOffsetBool, standbyBool);
 	}
 
 	private void ConstructOtherScriptsOfThisGameObject (float airplaneAltitude, int airplaneSpeed, int airplaneHeading, string idColr, Script_ChatText chatTextScript) {
@@ -308,11 +305,23 @@ public class Script_AirplaneMain : MonoBehaviour {
 	}
 
 	private void RunIfConstructTakeoffFalse (string dispName) {
-		if (dispName == "radar") {
-			GetComponent<Script_AirplaneDots> ().SetActive (true);
-		}
 		GetComponent<Collider> ().enabled = true;
 		GetComponent<Script_AirplaneAltitude> ().SetAltitudeMin (1000);
 		GetComponent<Script_AirplaneSpeed> ().SetSpeedMin (140);
+	}
+
+	private void SetupTimeCounterForUIElementsUpdate () {
+		while (timeCounterForUIElementsUpdate < Time.time) {
+			timeCounterForUIElementsUpdate += 3;
+		}
+	}
+
+	private void SetupAirplaneScripts () {
+		airplaneAltitudeScript = GetComponent<Script_AirplaneAltitude> ();
+		airplaneSpeedScript = GetComponent<Script_AirplaneSpeed> ();
+		airplaneHeadingScript = GetComponent<Script_AirplaneHeading> ();
+		airplaneDotsScript = GetComponent<Script_AirplaneDots> ();
+		airplaneLandingScript = GetComponent<Script_AirplaneLanding> ();
+		airplaneChatScript = GetComponent<Script_AirplaneChat> ();
 	}
 }

@@ -24,7 +24,7 @@ public class Script_MainCamera : MonoBehaviour {
 		if (target) {
 			nonOffsetPosition = target.transform.position;
 			transform.position = new Vector3 (nonOffsetPosition.x + offset.x, transform.position.y, nonOffsetPosition.z + offset.y);
-			controller.GetComponent<Script_Controller> ().UpdateUIElementPositions ();
+			controller.GetComponent<Script_ControllerMain> ().UpdateUIElementPositions ();
 		}
 	}
 
@@ -48,7 +48,7 @@ public class Script_MainCamera : MonoBehaviour {
 				}
 			}
 			delay = Time.time + 0.03f;
-			controller.GetComponent<Script_Controller> ().UpdateUIElementPositions ();
+			controller.GetComponent<Script_ControllerMain> ().UpdateUIElementPositions ();
 		}
 	}
 
@@ -67,7 +67,7 @@ public class Script_MainCamera : MonoBehaviour {
 				}
 			}
 			delay = Time.time + 0.03f;
-			controller.GetComponent<Script_Controller> ().UpdateUIElementPositions ();
+			controller.GetComponent<Script_ControllerMain> ().UpdateUIElementPositions ();
 		}
 	}
 	public void AddToOffset (Vector2 os) {

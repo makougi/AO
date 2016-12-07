@@ -16,13 +16,7 @@ public class Script_Schedule : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		CreateEntrypoints ();
-		if (activeIds == null) {
-			activeIds = new List<int> ();
-		}
-		scheduleSize = 20;
-		previousEntryTime = DateTime.Now;
-		scheduledFlights = new Queue<Script_ScheduledFlight> ();
+
 	}
 
 	// Update is called once per frame
@@ -35,6 +29,17 @@ public class Script_Schedule : MonoBehaviour {
 			scheduledFlights.Enqueue (flight);
 			UpdateScheduleText ();
 		}
+	}
+
+	public void Construct (List<GameObject> approachesList) {
+		approaches = approachesList;
+		CreateEntrypoints ();
+		if (activeIds == null) {
+			activeIds = new List<int> ();
+		}
+		scheduleSize = 20;
+		previousEntryTime = DateTime.Now;
+		scheduledFlights = new Queue<Script_ScheduledFlight> ();
 	}
 
 	private void CreateEntrypoints () {
@@ -72,10 +77,6 @@ public class Script_Schedule : MonoBehaviour {
 		entrypoint.SetPosition (new Vector2 (40, 40));
 		entrypoint.SetTakeoff (false);
 		entrypoints.Add (entrypoint);
-	}
-
-	public void SetApproaches (List<GameObject> apprchs) {
-		approaches = apprchs;
 	}
 
 	void UpdateScheduleText () {

@@ -21,7 +21,7 @@ public class Script_RadarButton : MonoBehaviour {
 	}
 
 	void SwitchButtonOn () {
-		controller.GetComponent<Script_Controller> ().switchDisplay ("radar");
+		controller.GetComponent<Script_ControllerMain> ().switchDisplay ("radar");
 		GetComponent<Image> ().color = new Color32 (135, 255, 135, 255);
 		satelliteButton.GetComponent<Image> ().color = new Color32 (185, 210, 235, 255);
 	}
