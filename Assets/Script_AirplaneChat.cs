@@ -47,7 +47,7 @@ public class Script_AirplaneChat : MonoBehaviour {
 
 	private void CheckIn () {
 		string request = "";
-		if (GetComponent<Script_AirplaneMain> ().GetStandby ()) {
+		if (GetComponent<Script_AirplaneMain> ().GetMode () == "standby") {
 			request = ", requesting takeoff";
 		}
 		AddToChatList ("Tower, " + GetComponent<Script_AirplaneMain> ().GetId () + SelectCheckInCompliment () + request);

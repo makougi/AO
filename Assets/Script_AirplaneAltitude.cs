@@ -122,8 +122,8 @@ public class Script_AirplaneAltitude : MonoBehaviour {
 		altitudeCommandCompleted = false;
 	}
 
-	public void Abort (bool takeoff) {
-		if (takeoff) {
+	public void Abort (string modeString) {
+		if (modeString == "takeoff" || modeString == "standby") {
 			altitudeMin = 0;
 			CommandAltitude (0);
 		} else {
@@ -134,5 +134,19 @@ public class Script_AirplaneAltitude : MonoBehaviour {
 			CommandAltitude (-1);
 			newCommand = true;
 		}
+	}
+
+	public string ReturnAltitudeStatusString () {
+		string status = "level at " + RoundToNearestTen (altitude) + " feet";
+		if (RoundToNearestTen (altitude) > RoundToNearestTen (altitudeAssigned)) {
+			status = "current altitude " + RoundToNearestTen (altitude) + " feet, descending to " + RoundToNearestTen (altitudeAssigned) + " feet";
+		} else if (RoundToNearestTen (altitude) < RoundToNearestTen (altitudeAssigned)) {
+			status = "current altitude " + RoundToNearestTen (altitude) + " feet, climbing to " + RoundToNearestTen (altitudeAssigned) + " feet";
+		}
+		return status;
+	}
+
+	private int RoundToNearestTen (float number) {
+		return ((int)(number / 10)) * 10;
 	}
 }

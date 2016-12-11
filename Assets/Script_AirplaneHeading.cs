@@ -8,7 +8,7 @@ public class Script_AirplaneHeading : MonoBehaviour {
 	public GameObject beaconRotator;
 	public int[] headingAssigned;
 
-	private Vector3[] beaconPosition;
+	private Vector3[] targetPosition;
 	private bool headingCommandCompleted;
 	private bool newCommand;
 	private bool once;
@@ -30,7 +30,7 @@ public class Script_AirplaneHeading : MonoBehaviour {
 		headingAssignedGameObject.transform.position = transform.position;
 		if (newCommand) {
 			if (Time.time > DelayedCommandTime) {
-				beaconPosition[0] = beaconPosition[1];
+				targetPosition[0] = targetPosition[1];
 				headingMode[0] = headingMode[1];
 				if (headingAssigned[1] == -1) {
 					headingAssigned[0] = heading;
@@ -42,7 +42,7 @@ public class Script_AirplaneHeading : MonoBehaviour {
 				newCommand = false;
 				if (headingMode[0] == 2) {
 					beaconRotator.SetActive (true);
-					beaconRotator.transform.position = beaconPosition[0] + headingAssignedGameObject.transform.TransformPoint (new Vector3 (0, 0, beaconRotationSize)) - headingAssignedGameObject.transform.position;
+					beaconRotator.transform.position = targetPosition[0] + headingAssignedGameObject.transform.TransformPoint (new Vector3 (0, 0, beaconRotationSize)) - headingAssignedGameObject.transform.position;
 				} else {
 					beaconRotator.SetActive (false);
 				}
@@ -58,25 +58,28 @@ public class Script_AirplaneHeading : MonoBehaviour {
 			}
 		}
 		if (headingMode[0] == 1) {
-			pointHeadingAssignedToBeacon ();
-			if (Mathf.Abs (beaconPosition[0].x - transform.position.x) < 10 && Mathf.Abs (beaconPosition[0].z - transform.position.z) < 10) {
+			if (!once) {
+				pointHeadingAssignedToBeacon ();
+				once = true;
+			}
+			if (Mathf.Abs (targetPosition[0].x - transform.position.x) < 10 && Mathf.Abs (targetPosition[0].z - transform.position.z) < 10) {
 				headingMode[0] = 0;
 			}
 			RotateShortest ();
 		}
 
 		if (headingMode[0] == 2) {
-			if (Vector3.Distance (beaconPosition[0], transform.position) > beaconRotationSize * 2) {
-				headingAssignedGameObject.transform.forward = beaconPosition[0] - transform.position;
-				beaconRotator.transform.position = beaconPosition[0] + headingAssignedGameObject.transform.TransformPoint (new Vector3 (0, 0, beaconRotationSize)) - headingAssignedGameObject.transform.position;
+			if (Vector3.Distance (targetPosition[0], transform.position) > beaconRotationSize * 2) {
+				headingAssignedGameObject.transform.forward = targetPosition[0] - transform.position;
+				beaconRotator.transform.position = targetPosition[0] + headingAssignedGameObject.transform.TransformPoint (new Vector3 (0, 0, beaconRotationSize)) - headingAssignedGameObject.transform.position;
 			} else {
 				if (!once) {
 					GetComponent<Script_AirplaneSpeed> ().CommandSpeed (200);
 					once = true;
 				}
 				headingAssignedGameObject.transform.forward = beaconRotator.transform.position - transform.position;
-				if (Vector3.Distance (beaconRotator.transform.position, transform.position) < Mathf.Max (1, 1 + Mathf.Abs (Vector3.Distance (beaconPosition[0], transform.position) - beaconRotationSize))) {
-					beaconRotator.transform.RotateAround (beaconPosition[0], Vector3.up, 1);
+				if (Vector3.Distance (beaconRotator.transform.position, transform.position) < Mathf.Max (1, 1 + Mathf.Abs (Vector3.Distance (targetPosition[0], transform.position) - beaconRotationSize))) {
+					beaconRotator.transform.RotateAround (targetPosition[0], Vector3.up, 1);
 				}
 			}
 			headingAssigned[0] = Mathf.RoundToInt (headingAssignedGameObject.transform.eulerAngles.y);
@@ -91,7 +94,7 @@ public class Script_AirplaneHeading : MonoBehaviour {
 		headingMode[0] = 0;
 		headingNormalOrLeftOrRight = new int[2];
 		headingNormalOrLeftOrRight[0] = 0;
-		beaconPosition = new Vector3[2];
+		targetPosition = new Vector3[2];
 		beaconRotationSize = 5;
 		headingChangeRate = 2.7f;
 		headingAssignedGameObject = Instantiate (headingAssignedGameObject);
@@ -103,7 +106,7 @@ public class Script_AirplaneHeading : MonoBehaviour {
 	}
 
 	void pointHeadingAssignedToBeacon () {
-		headingAssignedGameObject.transform.forward = beaconPosition[0] - transform.position;
+		headingAssignedGameObject.transform.forward = targetPosition[0] - transform.position;
 		headingAssigned[0] = Mathf.RoundToInt (headingAssignedGameObject.transform.eulerAngles.y);
 	}
 
@@ -170,10 +173,6 @@ public class Script_AirplaneHeading : MonoBehaviour {
 		newCommand = true;
 	}
 
-	public void CommandHeadingNormalOrLeftOrRight (int i) {
-		headingNormalOrLeftOrRight[0] = i;
-	}
-
 	public int GetHeading () {
 		return heading;
 	}
@@ -191,15 +190,16 @@ public class Script_AirplaneHeading : MonoBehaviour {
 
 	public void CommandHoldingPattern (Vector3 beaconPos) {
 		once = false;
-		beaconPosition[1] = beaconPos;
+		targetPosition[1] = beaconPos;
 		headingMode[1] = 2;
 		float delay = UnityEngine.Random.Range (1.5f, 7f);
 		DelayedCommandTime = Time.time + delay;
 		newCommand = true;
 	}
 
-	public void CommandBeaconHeading (Vector3 beaconPos) {
-		beaconPosition[1] = beaconPos;
+	public void CommandHeadingToPosition (Vector3 targetPositionVector) {
+		once = false;
+		targetPosition[1] = targetPositionVector;
 		headingMode[1] = 1;
 		float delay = UnityEngine.Random.Range (1.5f, 7f);
 		DelayedCommandTime = Time.time + delay;

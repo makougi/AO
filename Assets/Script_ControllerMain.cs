@@ -149,7 +149,7 @@ public class Script_ControllerMain : MonoBehaviour {
 	private void CreateFirstFlight () {
 		GameObject ap = Instantiate (airplane);
 		ap.transform.position = new Vector3 (0, 0, 0);
-		ap.GetComponent<Script_AirplaneMain> ().Construct (1111, 2000, 240, UnityEngine.Random.Range (0, 360), false, activeDisplayName, this.gameObject, chatText.GetComponent<Script_ChatText> (), GetComponent<Script_ColorsInterface> ().PickARandomColor (), dIPanel, airplaneTextsOffset);
+		ap.GetComponent<Script_AirplaneMain> ().Construct (1111, 2000, 240, UnityEngine.Random.Range (0, 360), "default", activeDisplayName, this.gameObject, chatText.GetComponent<Script_ChatText> (), GetComponent<Script_ColorsInterface> ().PickARandomColor (), dIPanel, airplaneTextsOffset);
 		airplanesDictionary.Add (1111, ap);
 		airplanesList.Add (ap);
 		scheduleScript.AddToActiveIds (1111);
@@ -160,7 +160,7 @@ public class Script_ControllerMain : MonoBehaviour {
 		if (flight) {
 			GameObject ap = Instantiate (airplane);
 			ap.transform.position = new Vector3 (flight.GetEntrypointPosition ().x, 0, flight.GetEntrypointPosition ().y);
-			ap.GetComponent<Script_AirplaneMain> ().Construct (flight.GetId (), flight.GetAltitude (), flight.GetSpeed (), flight.GetHeading (), flight.GetTakeoff (), activeDisplayName, this.gameObject, chatText.GetComponent<Script_ChatText> (), GetComponent<Script_ColorsInterface> ().PickARandomColor (), dIPanel, airplaneTextsOffset);
+			ap.GetComponent<Script_AirplaneMain> ().Construct (flight.GetId (), flight.GetAltitude (), flight.GetSpeed (), flight.GetHeading (), flight.GetMode (), activeDisplayName, this.gameObject, chatText.GetComponent<Script_ChatText> (), GetComponent<Script_ColorsInterface> ().PickARandomColor (), dIPanel, airplaneTextsOffset);
 			airplanesDictionary.Add (flight.GetId (), ap);
 			airplanesList.Add (ap);
 		}

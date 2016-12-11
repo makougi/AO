@@ -74,6 +74,7 @@ public class Script_AirplaneLanding : MonoBehaviour {
 		AirplaneMainScript.SetAltitudeMin (0);
 		AirplaneMainScript.SetSpeedMin (0);
 		AirplaneMainScript.ExecuteLandingMessage ();
+		AirplaneMainScript.SetMode ("landing");
 		landing = true;
 	}
 

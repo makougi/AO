@@ -72,6 +72,7 @@
     <Compile Include="Assets\Script_AirplaneMain.cs" />
     <Compile Include="Assets\Script_AirplaneSpeed.cs" />
     <Compile Include="Assets\Script_AirplaneText.cs" />
+    <Compile Include="Assets\Script_AirplaneWaypoints.cs" />
     <Compile Include="Assets\Script_Approach.cs" />
     <Compile Include="Assets\Script_ApproachesController.cs" />
     <Compile Include="Assets\Script_Beacon.cs" />
@@ -100,6 +101,7 @@
     <Compile Include="Assets\Script_ScheduleText.cs" />
     <Compile Include="Assets\Script_ScheduledFlight.cs" />
     <Compile Include="Assets\Script_UICanvas.cs" />
+    <Compile Include="Assets\Script_Waypoint.cs" />
     <Compile Include="Assets\Script_WorldLocationAndId.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

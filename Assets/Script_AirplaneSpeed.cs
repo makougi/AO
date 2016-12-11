@@ -144,8 +144,8 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 		speedCommandCompleted = false;
 	}
 
-	public float getFuel () {
-		return fuel;
+	public int RequestFuelInfo () {
+		return ((int)(fuel / 100)) * 100;
 	}
 
 	public bool CheckCommand (int spd) {
@@ -158,8 +158,8 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 		return true;
 	}
 
-	public void Abort (bool takeoff) {
-		if (takeoff) {
+	public void Abort (string modeString) {
+		if (modeString == "takeoff" || modeString == "standby") {
 			speedMin = 0;
 			CommandSpeed (0);
 		} else {

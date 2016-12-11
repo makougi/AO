@@ -12,19 +12,21 @@ public class Script_AirplaneMain : MonoBehaviour {
 	private Script_AirplaneAltitude airplaneAltitudeScript;
 	private Script_AirplaneSpeed airplaneSpeedScript;
 	private Script_AirplaneHeading airplaneHeadingScript;
-	private Script_AirplaneDots airplaneDotsScript;
+	private Script_AirplaneWaypoints airplaneWaypointsScript;
 	private Script_AirplaneLanding airplaneLandingScript;
+	private Script_AirplaneDots airplaneDotsScript;
 	private Script_AirplaneChat airplaneChatScript;
 
+
+	private string mode;
+	private string previousMode;
 	private bool readyForDestroy;
 	private bool abort;
 	private int id;
 	private int timeCounterForUIElementsUpdate;
 	private float speedMapScaleFactor;
 	private float timeCounterForDelayedCommands;
-	private bool takeoff;
 	private int takeoffHeading;
-	private bool standby;
 	private bool clearedToTakeoff;
 	private string displayName;
 
@@ -35,9 +37,10 @@ public class Script_AirplaneMain : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-		if (takeoff) {
+		if (mode == "takeoff" || mode == "standby") {
 			ProcessTakeoff ();
 		}
+
 		if (readyForDestroy) {
 			if (Time.time > timeCounterForDelayedCommands) {
 				DestroyThisEntity ();
@@ -61,16 +64,16 @@ public class Script_AirplaneMain : MonoBehaviour {
 		}
 	}
 
-	public void Construct (int iDInt, int altitudeInt, int speedInt, int headingInt, bool takeoffBool, string dispNameString, GameObject controllerGO, Script_ChatText chatTextScript, string iDColorString, GameObject dIPanelGO, bool airplaneTextOffsetBool) {
+	public void Construct (int iDInt, int altitudeInt, int speedInt, int headingInt, string modeString, string dispNameString, GameObject controllerGO, Script_ChatText chatTextScript, string iDColorString, GameObject dIPanelGO, bool airplaneTextOffsetBool) {
 		airplaneSprite = Instantiate (airplaneSprite);
 		speedMapScaleFactor = 0.000514444444f; // 1 kts = 0.000514444444 km / s
 		SetupTimeCounterForUIElementsUpdate ();
 		SetupAirplaneScripts ();
-		SetupVariablesOfThisScripts (dispNameString, iDInt, takeoffBool, headingInt, controllerGO);
+		SetupVariablesOfThisScripts (dispNameString, iDInt, modeString, headingInt, controllerGO);
 		ConstructOtherScriptsOfThisGameObject (altitudeInt, speedInt, headingInt, iDColorString, chatTextScript);
-		SetupAirplaneTextGameObject (iDInt, dIPanelGO, airplaneTextOffsetBool, takeoffBool);
+		SetupAirplaneTextGameObject (iDInt, dIPanelGO, airplaneTextOffsetBool, modeString);
 		transform.eulerAngles = new Vector3 (0, headingInt, 0);
-		if (takeoffBool) {
+		if (modeString == "takeoff") {
 			RunIfConstructTakeoffTrue (headingInt);
 		} else {
 			RunIfConstructTakeoffFalse (dispNameString);
@@ -78,11 +81,15 @@ public class Script_AirplaneMain : MonoBehaviour {
 		ChangeDisplayName (dispNameString);
 	}
 
+	public void SetMode (string modeString) {
+		mode = modeString;
+	}
+
 	public void ChangeDisplayName (string dn) {
 		displayName = dn;
 		if (dn == "radar") {
 			airplaneSprite.SetActive (false);
-			if (standby) {
+			if (mode == "standby") {
 				airplaneDotsScript.SetActive (false);
 				airplaneText.SetActive (false);
 			} else {
@@ -93,7 +100,7 @@ public class Script_AirplaneMain : MonoBehaviour {
 		} else if (dn == "satellite") {
 			airplaneDotsScript.SetActive (false);
 			airplaneText.SetActive (false);
-			if (standby) {
+			if (mode == "standby") {
 				airplaneSprite.SetActive (false);
 			} else {
 				airplaneSprite.SetActive (true);
@@ -139,10 +146,6 @@ public class Script_AirplaneMain : MonoBehaviour {
 		airplaneChatScript.ExecuteLandingMessage ();
 	}
 
-	public void CommandHeadingWithoutDelay (int hdg) {
-		airplaneHeadingScript.CommandHeadingWithoutDelay (hdg);
-	}
-
 	public void ExecuteLandingCompletedMessage () {
 		airplaneChatScript.ExecuteLandingCompletedMessage ();
 	}
@@ -160,12 +163,62 @@ public class Script_AirplaneMain : MonoBehaviour {
 		airplaneSpeedScript.ActivateBrakingMode ();
 	}
 
+	public void CommandHeading (int headingInt, int normalLeftOrRightInt) {
+		airplaneHeadingScript.CommandHeading (headingInt, normalLeftOrRightInt);
+		mode = "default";
+	}
+
+	public void CommandAltitude (float altitudeFloat) {
+		airplaneAltitudeScript.CommandAltitude (altitudeFloat);
+	}
+
+	public void CommandSpeed (int speedInt) {
+		airplaneSpeedScript.CommandSpeed (speedInt);
+	}
+
+	public void CommandHeadingToPosition (Vector3 targetPositionVector, bool defaultMode) {
+		airplaneHeadingScript.CommandHeadingToPosition (targetPositionVector);
+		if (defaultMode) {
+			mode = "default";
+		}
+	}
+
+	public void CommandHoldingPattern (Vector3 beaconPositionVector) {
+		airplaneHeadingScript.CommandHoldingPattern (beaconPositionVector);
+		mode = "holding pattern";
+	}
+
+	public void CommandWaypointMode () {
+		airplaneWaypointsScript.Activate (true);
+		mode = "waypoint";
+	}
+
+	public bool CheckHeadingCommand (int headingInt) {
+		return airplaneHeadingScript.CheckCommand (headingInt);
+	}
+
+	public bool CheckAltitudeCommand (int altitudeInt) {
+		return airplaneAltitudeScript.CheckCommand (altitudeInt);
+	}
+
+	public bool CheckSpeedCommand (int speedInt) {
+		return airplaneSpeedScript.CheckCommand (speedInt);
+	}
+
+	public void CommandHeadingWithoutDelay (int hdg) {
+		airplaneHeadingScript.CommandHeadingWithoutDelay (hdg);
+	}
+
 	public void CommandAltitudeWithoutDelay (float alt) {
 		airplaneAltitudeScript.CommandAltitudeWithoutDelay (alt);
 	}
 
 	public void CommandSpeedWithoutDelay (int spd) {
 		airplaneSpeedScript.CommandSpeedWithoutDelay (spd);
+	}
+
+	public int RequestFuelInfo () {
+		return airplaneSpeedScript.RequestFuelInfo ();
 	}
 
 	public string GetId () {
@@ -180,12 +233,8 @@ public class Script_AirplaneMain : MonoBehaviour {
 		return controller;
 	}
 
-	public bool GetTakeoff () {
-		return takeoff;
-	}
-
-	public bool GetStandby () {
-		return standby;
+	public string GetMode () {
+		return mode;
 	}
 
 	public float GetAltitude () {
@@ -195,6 +244,18 @@ public class Script_AirplaneMain : MonoBehaviour {
 	public float GetSpeed () {
 		return airplaneSpeedScript.GetSpeed ();
 	}
+
+	public int GetSpeedAssigned () {
+		return airplaneSpeedScript.GetSpeedAssigned ();
+	}
+
+	public string GetCurrentWaypointName () {
+		return airplaneWaypointsScript.GetCurrentWaypointName ();
+	}
+
+	public string ReturnStatusString () {
+		return airplaneAltitudeScript.ReturnAltitudeStatusString () + ", "
+    }
 
 	public void SetAltitudeMin (int alt) {
 		airplaneAltitudeScript.SetAltitudeMin (alt);
@@ -206,9 +267,9 @@ public class Script_AirplaneMain : MonoBehaviour {
 
 	private void ProcessTakeoff () {
 		if (clearedToTakeoff && Time.time > timeCounterForDelayedCommands) {
-			standby = false;
+			mode = "takeoff";
 		}
-		if (standby) {
+		if (mode == "standby") {
 			airplaneSpeedScript.SetSpeed (0);
 			airplaneAltitudeScript.SetAltitude (0);
 			airplaneHeadingScript.SetHeading (takeoffHeading);
@@ -225,16 +286,17 @@ public class Script_AirplaneMain : MonoBehaviour {
 				airplaneAltitudeScript.SetAltitudeMin (1000);
 				airplaneAltitudeScript.CommandAltitudeWithoutDelay (airplaneAltitudeScript.GetAltitudeAssigned ());
 				airplaneSpeedScript.SetSpeedMin (140);
-				takeoff = false;
+				mode = "default";
 			}
 		}
 	}
 
 	private void ProcessAbort () {
 		airplaneLandingScript.Abort ();
-		airplaneAltitudeScript.Abort (takeoff);
-		airplaneSpeedScript.Abort (takeoff);
+		airplaneAltitudeScript.Abort (mode);
+		airplaneSpeedScript.Abort (mode);
 		airplaneHeadingScript.Abort ();
+		mode = "abort";
 		abort = false;
 	}
 
@@ -276,9 +338,9 @@ public class Script_AirplaneMain : MonoBehaviour {
 		return (int)Math.Round (altitude * 0.01f);
 	}
 
-	private void SetupAirplaneTextGameObject (int idInt, GameObject dIPanelGO, bool airplaneTextOffsetBool, bool standbyBool) {
+	private void SetupAirplaneTextGameObject (int idInt, GameObject dIPanelGO, bool airplaneTextOffsetBool, string modeString) {
 		airplaneText = Instantiate (airplaneText);
-		airplaneText.GetComponent<Script_AirplaneText> ().Construct (idInt, dIPanelGO, airplaneTextOffsetBool, standbyBool);
+		airplaneText.GetComponent<Script_AirplaneText> ().Construct (idInt, dIPanelGO, airplaneTextOffsetBool, modeString);
 	}
 
 	private void ConstructOtherScriptsOfThisGameObject (float airplaneAltitude, int airplaneSpeed, int airplaneHeading, string idColr, Script_ChatText chatTextScript) {
@@ -288,11 +350,14 @@ public class Script_AirplaneMain : MonoBehaviour {
 		GetComponent<Script_AirplaneChat> ().Construct (idColr, chatTextScript);
 	}
 
-	private void SetupVariablesOfThisScripts (string dispName, int airplaneId, bool airplaneTakeoff, int airplaneHeading, GameObject controllerGameObject) {
+	private void SetupVariablesOfThisScripts (string dispName, int airplaneId, string modeString, int airplaneHeading, GameObject controllerGameObject) {
 		displayName = dispName;
 		id = airplaneId;
-		standby = airplaneTakeoff;
-		takeoff = airplaneTakeoff;
+		if (modeString == "takeoff") {
+			mode = "standby";
+		} else {
+			mode = modeString;
+		}
 		takeoffHeading = airplaneHeading;
 		controller = controllerGameObject;
 	}
@@ -320,8 +385,9 @@ public class Script_AirplaneMain : MonoBehaviour {
 		airplaneAltitudeScript = GetComponent<Script_AirplaneAltitude> ();
 		airplaneSpeedScript = GetComponent<Script_AirplaneSpeed> ();
 		airplaneHeadingScript = GetComponent<Script_AirplaneHeading> ();
-		airplaneDotsScript = GetComponent<Script_AirplaneDots> ();
+		airplaneWaypointsScript = GetComponent<Script_AirplaneWaypoints> ();
 		airplaneLandingScript = GetComponent<Script_AirplaneLanding> ();
+		airplaneDotsScript = GetComponent<Script_AirplaneDots> ();
 		airplaneChatScript = GetComponent<Script_AirplaneChat> ();
 	}
 }

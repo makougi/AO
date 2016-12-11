@@ -11,7 +11,7 @@ public class Script_ScheduledFlight : ScriptableObject {
 	private int speed;
 	private string entrypointId;
 	private Vector2 entrypointPosition;
-	private bool takeoff;
+	private string mode;
 	private int heading;
 
 	// Use this for initialization
@@ -27,7 +27,7 @@ public class Script_ScheduledFlight : ScriptableObject {
 		entryTime = SelectArbitraryEntrytime (previousEntryTime);
 		id = CreateId (activeIds);
 		SelectArbitraryEntrypoint (entrypoints);
-		if (takeoff) {
+		if (mode == "takeoff") {
 			altitude = 0;
 			speed = 0;
 		} else {
@@ -63,11 +63,15 @@ public class Script_ScheduledFlight : ScriptableObject {
 		entrypointId = entrypoint.GetId ();
 		entrypointPosition = entrypoint.GetPosition ();
 		heading = entrypoint.GetDirection ();
-		takeoff = entrypoint.GetTakeoff ();
+		if (entrypoint.GetTakeoff ()) {
+			mode = "takeoff";
+		} else {
+			mode = "default";
+		}
 	}
 
 	override public string ToString () {
-		if (takeoff) {
+		if (mode == "takeoff") {
 			return "ETA " + HourOrMinuteToTwoDigitString (entryTime.Hour) + ":" + HourOrMinuteToTwoDigitString (entryTime.Minute) + " - ID " + IdToFourDigitString (id) + " - " + entrypointId;
 		}
 		return "ETA " + HourOrMinuteToTwoDigitString (entryTime.Hour) + ":" + HourOrMinuteToTwoDigitString (entryTime.Minute) + " - ID " + IdToFourDigitString (id) + " - " + entrypointId + " - FL" + AltitudeToRoundedFlightlevelString (altitude);
@@ -122,8 +126,8 @@ public class Script_ScheduledFlight : ScriptableObject {
 		return entrypointPosition;
 	}
 
-	public bool GetTakeoff () {
-		return takeoff;
+	public string GetMode () {
+		return mode;
 	}
 
 	public int GetHeading () {

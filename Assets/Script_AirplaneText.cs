@@ -27,7 +27,7 @@ public class Script_AirplaneText : MonoBehaviour {
 
 	}
 
-	public void Construct (int iDInt, GameObject dIPanelGO, bool airplaneTextsOffsetBool, bool standbyBool) {
+	public void Construct (int iDInt, GameObject dIPanelGO, bool airplaneTextsOffsetBool, string modeString) {
 		airplaneId = iDInt;
 		offsetDefault = new Vector3 (0, -30, 0);
 		offset = offsetDefault;
@@ -35,7 +35,7 @@ public class Script_AirplaneText : MonoBehaviour {
 		transform.SetParent (dIPanelGO.transform);
 		lineImage.transform.SetParent (dIPanelGO.transform);
 		RandomizeOffset (airplaneTextsOffsetBool);
-		this.gameObject.SetActive (!standbyBool);
+		this.gameObject.SetActive (modeString != "standby");
 	}
 
 	public void UpdateUIPosition (Vector3 mainDotPosition) {
