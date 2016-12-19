@@ -313,7 +313,7 @@ public class Script_ChatParser : MonoBehaviour {
 
 	private void RequestStatus (Script_AirplaneMain airplaneMainScript, Script_AirplaneChat airplaneChatScript) {
 		chatTextScript.AddText ("report status");
-		airplaneChatScript.AddToChatList (airplaneMainScript.ReturnStatusString ());
+		airplaneMainScript.AddStatusReportToChatList ();
 	}
 
 	private void Abort (Script_AirplaneMain airplaneMainScript) {

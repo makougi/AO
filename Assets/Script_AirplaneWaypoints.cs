@@ -38,8 +38,8 @@ public class Script_AirplaneWaypoints : MonoBehaviour {
 	}
 
 	public void Activate (bool activate) {
-		airplaneMainScript.CommandHeadingToPosition (waypointsList[waypointsIndex].GetVector3WpPosition (), false)
-    }
+		airplaneMainScript.CommandHeadingToPosition (waypointsList[waypointsIndex].GetVector3WpPosition (), false);
+	}
 
 	public string GetCurrentWaypointName () {
 		return waypointsList[waypointsIndex].GetWpName ();

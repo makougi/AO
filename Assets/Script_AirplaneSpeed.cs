@@ -171,4 +171,14 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 			newCommand = true;
 		}
 	}
+
+	public string ReturnSpeedStatusString () {
+		if (speedAssigned > (int)speed) {
+			return "accelerating to " + speedAssigned + " knots";
+		}
+		if (speedAssigned < (int)speed) {
+			return "slowing down to" + speedAssigned + " knots";
+		}
+		return "speed at " + (int)speed + " knots"
+    }
 }

@@ -254,8 +254,8 @@ public class Script_AirplaneMain : MonoBehaviour {
 	}
 
 	public string ReturnStatusString () {
-		return airplaneAltitudeScript.ReturnAltitudeStatusString () + ", "
-    }
+		return airplaneAltitudeScript.ReturnAltitudeStatusString () + ", ";
+	}
 
 	public void SetAltitudeMin (int alt) {
 		airplaneAltitudeScript.SetAltitudeMin (alt);
@@ -263,6 +263,26 @@ public class Script_AirplaneMain : MonoBehaviour {
 
 	public void SetSpeedMin (int spd) {
 		airplaneSpeedScript.SetSpeedMin (spd);
+	}
+
+	public void AddStatusReportToChatList () {
+		StartCoroutine (ProcessStatusReportRequest ());
+	}
+
+	private IEnumerator ProcessStatusReportRequest () {
+		Vector3 referenceForward = transform.forward;
+		yield return null;
+		if (mode == "standby") {
+			airplaneChatScript.AddToChatList ("ready for takeoff");
+		} else if (mode == "takeoff") {
+			airplaneChatScript.AddToChatList ("executing takeoff");
+		} else if (mode == "landing") {
+			airplaneChatScript.AddToChatList ("executing landing");
+		} else {
+			airplaneChatScript.AddToChatList (airplaneAltitudeScript.ReturnAltitudeStatusString ()
+				+ ", " + airplaneHeadingScript.ReturnHeadingStatusString (referenceForward, mode)
+				+ ", " + airplaneSpeedScript.ReturnSpeedStatusString ());
+		}
 	}
 
 	private void ProcessTakeoff () {

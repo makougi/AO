@@ -6,8 +6,8 @@ public class Script_AirplaneHeading : MonoBehaviour {
 
 	public GameObject headingAssignedGameObject;
 	public GameObject beaconRotator;
-	public int[] headingAssigned;
 
+	private int[] headingAssigned;
 	private Vector3[] targetPosition;
 	private bool headingCommandCompleted;
 	private bool newCommand;
@@ -218,5 +218,30 @@ public class Script_AirplaneHeading : MonoBehaviour {
 
 	public void Abort () {
 		CommandHeading (-1, 0);
+	}
+
+	public string ReturnHeadingStatusString (Vector3 referenceForwardVector, string airplaneModeString) {
+		float cross = (Vector3.Cross (transform.forward, referenceForwardVector)).y;
+		if (cross > 0) {
+			return "turning left to " + ReturnTargetString (GetHeadingAssigned (), airplaneModeString);
+		}
+		if (cross < 0) {
+			return "turning right to " + ReturnTargetString (GetHeadingAssigned (), airplaneModeString); ;
+		}
+		return "heading " + ReturnTargetString (GetHeadingAssigned (), airplaneModeString);
+	}
+
+	private string ReturnTargetString (int headingAssignedInt, string airplaneModeString) {
+		return ReturnHeadingString (headingAssignedInt) + "blaa ei valmis, modevaihtoehdot";
+	}
+
+	private string ReturnHeadingString (int headingInt) {
+		if (headingInt >= 100) {
+			return "" + headingInt;
+		} else if (headingInt >= 10) {
+			return "0" + headingInt;
+		} else {
+			return "00" + headingInt;
+		}
 	}
 }

@@ -35,6 +35,7 @@ public class Script_ControllerMain : MonoBehaviour {
 		switchDisplay ("radar");
 
 		CreateFirstFlight ();
+
 	}
 
 	// Update is called once per frame

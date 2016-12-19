@@ -137,13 +137,13 @@ public class Script_AirplaneAltitude : MonoBehaviour {
 	}
 
 	public string ReturnAltitudeStatusString () {
-		string status = "level at " + RoundToNearestTen (altitude) + " feet";
 		if (RoundToNearestTen (altitude) > RoundToNearestTen (altitudeAssigned)) {
-			status = "current altitude " + RoundToNearestTen (altitude) + " feet, descending to " + RoundToNearestTen (altitudeAssigned) + " feet";
-		} else if (RoundToNearestTen (altitude) < RoundToNearestTen (altitudeAssigned)) {
-			status = "current altitude " + RoundToNearestTen (altitude) + " feet, climbing to " + RoundToNearestTen (altitudeAssigned) + " feet";
+			return "altitude " + RoundToNearestTen (altitude) + " feet, descending to " + RoundToNearestTen (altitudeAssigned) + " feet";
 		}
-		return status;
+		if (RoundToNearestTen (altitude) < RoundToNearestTen (altitudeAssigned)) {
+			return "altitude " + RoundToNearestTen (altitude) + " feet, climbing to " + RoundToNearestTen (altitudeAssigned) + " feet";
+		}
+		return "level at " + RoundToNearestTen (altitude) + " feet";
 	}
 
 	private int RoundToNearestTen (float number) {
