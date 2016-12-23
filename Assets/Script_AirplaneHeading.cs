@@ -9,6 +9,7 @@ public class Script_AirplaneHeading : MonoBehaviour {
 
 	private int[] headingAssigned;
 	private Vector3[] targetPosition;
+	private string[] targetName;
 	private bool headingCommandCompleted;
 	private bool newCommand;
 	private bool once;
@@ -31,6 +32,7 @@ public class Script_AirplaneHeading : MonoBehaviour {
 		if (newCommand) {
 			if (Time.time > DelayedCommandTime) {
 				targetPosition[0] = targetPosition[1];
+				targetName[0] = targetName[1];
 				headingMode[0] = headingMode[1];
 				if (headingAssigned[1] == -1) {
 					headingAssigned[0] = heading;
@@ -89,6 +91,7 @@ public class Script_AirplaneHeading : MonoBehaviour {
 	}
 
 	public void Construct (int hdg) {
+		targetName = new string[2];
 		headingAssigned = new int[2];
 		headingMode = new int[2];
 		headingMode[0] = 0;
@@ -188,18 +191,20 @@ public class Script_AirplaneHeading : MonoBehaviour {
 		headingCommandCompleted = false;
 	}
 
-	public void CommandHoldingPattern (Vector3 beaconPos) {
+	public void CommandHoldingPattern (GameObject beaconGameObject) {
 		once = false;
-		targetPosition[1] = beaconPos;
+		targetPosition[1] = beaconGameObject.GetComponent<Script_Beacon> ().GetWorldPosition ();
+		targetName[1] = beaconGameObject.GetComponent<Script_Beacon> ().GetId ();
 		headingMode[1] = 2;
 		float delay = UnityEngine.Random.Range (1.5f, 7f);
 		DelayedCommandTime = Time.time + delay;
 		newCommand = true;
 	}
 
-	public void CommandHeadingToPosition (Vector3 targetPositionVector) {
+	public void CommandHeadingToPosition (Vector3 targetPositionVector, string targetNameString) {
 		once = false;
 		targetPosition[1] = targetPositionVector;
+		targetName[1] = targetNameString;
 		headingMode[1] = 1;
 		float delay = UnityEngine.Random.Range (1.5f, 7f);
 		DelayedCommandTime = Time.time + delay;
@@ -220,19 +225,28 @@ public class Script_AirplaneHeading : MonoBehaviour {
 		CommandHeading (-1, 0);
 	}
 
-	public string ReturnHeadingStatusString (Vector3 referenceForwardVector, string airplaneModeString) {
+	public string ReturnHeadingStatusString (Vector3 referenceForwardVector) {
+		if (headingMode[0] == 2 && once) {
+			return "holding at " + targetName[0];
+		}
 		float cross = (Vector3.Cross (transform.forward, referenceForwardVector)).y;
 		if (cross > 0) {
-			return "turning left to " + ReturnTargetString (GetHeadingAssigned (), airplaneModeString);
+			return "turning left " + ReturnTargetString (GetHeadingAssigned ());
 		}
 		if (cross < 0) {
-			return "turning right to " + ReturnTargetString (GetHeadingAssigned (), airplaneModeString); ;
+			return "turning right " + ReturnTargetString (GetHeadingAssigned ()); ;
 		}
-		return "heading " + ReturnTargetString (GetHeadingAssigned (), airplaneModeString);
+		return "heading " + ReturnTargetString (GetHeadingAssigned ());
 	}
 
-	private string ReturnTargetString (int headingAssignedInt, string airplaneModeString) {
-		return ReturnHeadingString (headingAssignedInt) + "blaa ei valmis, modevaihtoehdot";
+	private string ReturnTargetString (int headingAssignedInt) {
+		if (headingMode[0] == 1) {
+			return "to " + targetName[0];
+		}
+		if (headingMode[0] == 2) {
+			return "to " + targetName[0] + " for holding pattern";
+		}
+		return ReturnHeadingString (headingAssignedInt);
 	}
 
 	private string ReturnHeadingString (int headingInt) {

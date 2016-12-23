@@ -8,9 +8,6 @@ public class Script_ChatParser : MonoBehaviour {
 	private Script_ChatText chatTextScript;
 	private Script_AirplaneMain sApMain;
 	private Script_AirplaneChat sApChat;
-	private Script_AirplaneAltitude sApAltitude;
-	private Script_AirplaneSpeed sApSpeed;
-	private Script_AirplaneHeading sApHeading;
 	private Dictionary<int, GameObject> airplanesDictionary;
 	private List<GameObject> airplanesList;
 	private Dictionary<string, GameObject> beaconsDictionary;
@@ -71,9 +68,6 @@ public class Script_ChatParser : MonoBehaviour {
 				} else {
 					airplaneId = 0;
 					sApChat = null;
-					sApAltitude = null;
-					sApSpeed = null;
-					sApHeading = null;
 				}
 				if (words.Length == 1) {
 					if (airplaneId != 0) {
@@ -241,7 +235,7 @@ public class Script_ChatParser : MonoBehaviour {
 		if (!discardCommands) {
 			if (airplaneMainScript) {
 				if (beaconsDictionary.ContainsKey (beaconId)) {
-					airplaneMainScript.CommandHeadingToPosition (beaconsDictionary[beaconId].GetComponent<Script_Beacon> ().GetWorldPosition (), true);
+					airplaneMainScript.CommandHeadingToPosition (beaconsDictionary[beaconId].GetComponent<Script_Beacon> ().GetWorldPosition (), beaconsDictionary[beaconId].GetComponent<Script_Beacon> ().GetId (), true);
 					airplaneChatScript.AddToChatList ("heading to " + ConvertLettersToICAOPronounciation (beaconId));
 				} else {
 					airplaneChatScript.AddToChatList ("unable, invalid beacon id");
@@ -257,7 +251,7 @@ public class Script_ChatParser : MonoBehaviour {
 		if (!discardCommands) {
 			if (airplaneMainScript) {
 				if (beaconsDictionary.ContainsKey (beaconId)) {
-					airplaneMainScript.CommandHoldingPattern (beaconsDictionary[beaconId].GetComponent<Script_Beacon> ().GetWorldPosition ());
+					airplaneMainScript.CommandHoldingPattern (beaconsDictionary[beaconId]);
 					airplaneChatScript.AddToChatList ("holding at " + ConvertLettersToICAOPronounciation (beaconId));
 				} else {
 					airplaneChatScript.AddToChatList ("unable, invalid beacon id");
@@ -294,7 +288,7 @@ public class Script_ChatParser : MonoBehaviour {
 	private void GrantTakeoffClearance (Script_AirplaneMain airplaneMainScript, Script_AirplaneChat airplaneChatScript) {
 		chatTextScript.AddText ("cleared to takeoff");
 		if (airplaneMainScript.GetMode () == "takeoff" || airplaneMainScript.GetMode () == "standby") {
-			airplaneMainScript.GrantTakeoffClearance ();
+			airplaneMainScript.GrantTakeoffClearance ("someRunway");
 			if (airplaneMainScript.GetSpeedAssigned () < 140) {
 				airplaneMainScript.CommandSpeed (240);
 			}

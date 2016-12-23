@@ -29,6 +29,7 @@ public class Script_AirplaneMain : MonoBehaviour {
 	private int takeoffHeading;
 	private bool clearedToTakeoff;
 	private string displayName;
+	private string runwayName;
 
 	// Use this for initialization
 	void Start () {
@@ -121,6 +122,7 @@ public class Script_AirplaneMain : MonoBehaviour {
 	}
 
 	public void GrantLandingClearance (string clearedApprchId) {
+		runwayName = clearedApprchId;
 		airplaneLandingScript.GrantLandingClearance (clearedApprchId);
 	}
 
@@ -137,7 +139,8 @@ public class Script_AirplaneMain : MonoBehaviour {
 		airplaneAltitudeScript.ActivateGlideMode ();
 	}
 
-	public void GrantTakeoffClearance () {
+	public void GrantTakeoffClearance (string runwayNameString) {
+		runwayName = runwayNameString;
 		timeCounterForDelayedCommands = Time.time + UnityEngine.Random.Range (8, 16);
 		clearedToTakeoff = true;
 	}
@@ -176,15 +179,15 @@ public class Script_AirplaneMain : MonoBehaviour {
 		airplaneSpeedScript.CommandSpeed (speedInt);
 	}
 
-	public void CommandHeadingToPosition (Vector3 targetPositionVector, bool defaultMode) {
-		airplaneHeadingScript.CommandHeadingToPosition (targetPositionVector);
+	public void CommandHeadingToPosition (Vector3 targetPositionVector, string targetName, bool defaultMode) {
+		airplaneHeadingScript.CommandHeadingToPosition (targetPositionVector, targetName);
 		if (defaultMode) {
 			mode = "default";
 		}
 	}
 
-	public void CommandHoldingPattern (Vector3 beaconPositionVector) {
-		airplaneHeadingScript.CommandHoldingPattern (beaconPositionVector);
+	public void CommandHoldingPattern (GameObject beaconGameObject) {
+		airplaneHeadingScript.CommandHoldingPattern (beaconGameObject);
 		mode = "holding pattern";
 	}
 
@@ -273,14 +276,19 @@ public class Script_AirplaneMain : MonoBehaviour {
 		Vector3 referenceForward = transform.forward;
 		yield return null;
 		if (mode == "standby") {
-			airplaneChatScript.AddToChatList ("ready for takeoff");
+			airplaneChatScript.AddToChatList ("ready for takeoff runway " + runwayName);
 		} else if (mode == "takeoff") {
-			airplaneChatScript.AddToChatList ("executing takeoff");
+			airplaneChatScript.AddToChatList ("executing takeoff runway " + runwayName);
 		} else if (mode == "landing") {
-			airplaneChatScript.AddToChatList ("executing landing");
+			airplaneChatScript.AddToChatList ("landing to runway " + runwayName);
+		} else if (mode == "waypoint") {
+			airplaneChatScript.AddToChatList (airplaneAltitudeScript.ReturnAltitudeStatusString ()
+				+ ", " + airplaneHeadingScript.ReturnHeadingStatusString (referenceForward)
+				+ ", " + airplaneSpeedScript.ReturnSpeedStatusString ()
+				+ ", " + airplaneWaypointsScript.ReturnWaypointStatusString ());
 		} else {
 			airplaneChatScript.AddToChatList (airplaneAltitudeScript.ReturnAltitudeStatusString ()
-				+ ", " + airplaneHeadingScript.ReturnHeadingStatusString (referenceForward, mode)
+				+ ", " + airplaneHeadingScript.ReturnHeadingStatusString (referenceForward)
 				+ ", " + airplaneSpeedScript.ReturnSpeedStatusString ());
 		}
 	}

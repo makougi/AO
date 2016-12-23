@@ -177,8 +177,8 @@ public class Script_AirplaneSpeed : MonoBehaviour {
 			return "accelerating to " + speedAssigned + " knots";
 		}
 		if (speedAssigned < (int)speed) {
-			return "slowing down to" + speedAssigned + " knots";
+			return "slowing down to " + speedAssigned + " knots";
 		}
-		return "speed at " + (int)speed + " knots"
-    }
+		return "speed at " + (int)speed + " knots";
+	}
 }
