@@ -59,7 +59,7 @@ public class Script_BeaconsController : MonoBehaviour {
 					bcn.GetComponent<Text> ().text = beaconId;
 					bcn.transform.SetParent (dIPanelGO.transform);
 					bcn.GetComponent<Script_Beacon> ().SetBeaconPosition (beaconPosition);
-					bcn.GetComponent<Script_Beacon> ().UpdateBeaconPosition ();
+					bcn.GetComponent<Script_Beacon> ().UpdateBeaconUIPosition ();
 					bcn.GetComponent<Script_Beacon> ().SetId (beaconId);
 					break;
 				}

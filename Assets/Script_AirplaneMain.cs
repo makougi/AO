@@ -114,6 +114,9 @@ public class Script_AirplaneMain : MonoBehaviour {
 			airplaneDotsScript.UpdateUIPosition ();
 		}
 		airplaneText.GetComponent<Script_AirplaneText> ().UpdateUIPosition (GetComponent<Script_AirplaneDots> ().getAirplaneMainDotPosition ());
+		if (airplaneWaypointsScript.WaypointDisplayIsActive ()) {
+			airplaneWaypointsScript.UpdateWaypointImagesUIPositionsAndDrawLines ();
+		}
 	}
 
 	public void Abort () {
@@ -270,6 +273,10 @@ public class Script_AirplaneMain : MonoBehaviour {
 
 	public void AddStatusReportToChatList () {
 		StartCoroutine (ProcessStatusReportRequest ());
+	}
+
+	public void ActivateWaypointGameObjects (bool b, GameObject dIPanel) {
+		airplaneWaypointsScript.ActivateWaypointGameObjects (b, dIPanel);
 	}
 
 	private IEnumerator ProcessStatusReportRequest () {

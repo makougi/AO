@@ -36,7 +36,7 @@ public class Script_Waypoint : ScriptableObject {
 		return wpType;
 	}
 
-	public Vector3 GetVector3WpPosition () {
+	public Vector3 GetWpVector3Position () {
 		return new Vector3 (wpPosition.x, 0, wpPosition.y);
 	}
 

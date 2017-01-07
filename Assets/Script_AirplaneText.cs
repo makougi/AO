@@ -32,6 +32,7 @@ public class Script_AirplaneText : MonoBehaviour {
 		offsetDefault = new Vector3 (0, -30, 0);
 		offset = offsetDefault;
 		lineImage = Instantiate (lineImage);
+		lineImage.GetComponent<Image> ().color = new Color32 (255, 255, 255, 127);
 		transform.SetParent (dIPanelGO.transform);
 		lineImage.transform.SetParent (dIPanelGO.transform);
 		RandomizeOffset (airplaneTextsOffsetBool);

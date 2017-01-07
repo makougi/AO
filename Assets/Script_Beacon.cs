@@ -8,7 +8,7 @@ public class Script_Beacon : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		UpdateBeaconPosition ();
+		UpdateBeaconUIPosition ();
 	}
 
 	// Update is called once per frame
@@ -20,7 +20,7 @@ public class Script_Beacon : MonoBehaviour {
 		beaconPosition = bp;
 	}
 
-	public void UpdateBeaconPosition () {
+	public void UpdateBeaconUIPosition () {
 		transform.position = new Vector3 (Camera.main.WorldToScreenPoint (beaconPosition).x, Camera.main.WorldToScreenPoint (beaconPosition).y, 0);
 	}
 

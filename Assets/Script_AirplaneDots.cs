@@ -57,8 +57,10 @@ public class Script_AirplaneDots : MonoBehaviour {
 
 	public void UpdateUIPosition () {
 		airplaneMainDot.transform.position = new Vector3 (Camera.main.WorldToScreenPoint (airplaneMainDotWorldPosition).x, Camera.main.WorldToScreenPoint (airplaneMainDotWorldPosition).y);
-		foreach (GameObject go in airplaneDots) {
-			go.GetComponent<Script_AirplaneDot> ().UpdatePosition ();
+		if (airplaneDots != null) {
+			foreach (GameObject go in airplaneDots) {
+				go.GetComponent<Script_AirplaneDot> ().UpdatePosition ();
+			}
 		}
 	}
 

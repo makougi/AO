@@ -52,10 +52,11 @@ public class Script_ControllerMain : MonoBehaviour {
 
 	public void UpdateUIElementPositions () {
 		foreach (GameObject go in beaconsControllerScript.GetBeaconsList ()) {
-			go.GetComponent<Script_Beacon> ().UpdateBeaconPosition ();
+			go.GetComponent<Script_Beacon> ().UpdateBeaconUIPosition ();
 		}
 		foreach (GameObject go in airplanesList) {
 			go.GetComponent<Script_AirplaneMain> ().UpdateAirplaneUIElementUIPositions ();
+			//tähän waypoint kontrollia
 		}
 		foreach (GameObject go in approachesControllerScript.GetApproachesList ()) {
 			go.GetComponent<Script_Approach> ().UpdateUIPosition ();
@@ -184,6 +185,6 @@ public class Script_ControllerMain : MonoBehaviour {
 		AddToTargetsList (airplanesList);
 		GetComponent<Script_ChatParser> ().Construct (chatText.GetComponent<Script_ChatText> (), airplanesDictionary, airplanesList, beaconsControllerScript.GetBeaconsDictionary (), approachesControllerScript.GetApproachesDictionary ());
 		GetComponent<Script_KeyboardControls> ().Construct (mainCamera);
-		GetComponent<Script_IDParser> ().Construct (mainCamera, targets);
+		GetComponent<Script_IDParser> ().Construct (mainCamera, targets, dIPanel);
 	}
 }

@@ -7,7 +7,8 @@ public class Script_UICanvas : MonoBehaviour {
 	public GameObject clockField;
 	public GameObject scheduleField;
 	public GameObject offsetButton;
-	public GameObject iDButton;
+	public GameObject iDWaypointButton;
+	public GameObject iDCameraButton;
 	public GameObject iDInputField;
 	public GameObject radarButton;
 	public GameObject satelliteButton;
@@ -37,9 +38,11 @@ public class Script_UICanvas : MonoBehaviour {
 		scheduleField.GetComponent<RectTransform> ().anchoredPosition = new Vector2 (xPos, yPos);
 		yPos = yPos - scheduleField.GetComponent<RectTransform> ().sizeDelta.y - 5;
 		offsetButton.GetComponent<RectTransform> ().anchoredPosition = new Vector2 (xPos, yPos);
-		xPos = xPos + offsetButton.GetComponent<RectTransform> ().sizeDelta.x + 5;
-		iDButton.GetComponent<RectTransform> ().anchoredPosition = new Vector2 (xPos, yPos);
-		xPos = xPos + iDButton.GetComponent<RectTransform> ().sizeDelta.x + 5;
+		yPos = yPos - offsetButton.GetComponent<RectTransform> ().sizeDelta.y - 5;
+		iDWaypointButton.GetComponent<RectTransform> ().anchoredPosition = new Vector2 (xPos, yPos);
+		xPos = xPos + iDWaypointButton.GetComponent<RectTransform> ().sizeDelta.x + 5;
+		iDCameraButton.GetComponent<RectTransform> ().anchoredPosition = new Vector2 (xPos, yPos);
+		xPos = xPos + iDCameraButton.GetComponent<RectTransform> ().sizeDelta.x + 5;
 		iDInputField.GetComponent<RectTransform> ().anchoredPosition = new Vector2 (xPos, yPos);
 		xPos = 5;
 		yPos = yPos - offsetButton.GetComponent<RectTransform> ().sizeDelta.y - 5;
@@ -60,7 +63,8 @@ public class Script_UICanvas : MonoBehaviour {
 	private void SetupSize () {
 		clockField.GetComponent<RectTransform> ().sizeDelta = new Vector2 (uIPanel.GetComponent<RectTransform> ().sizeDelta.x - 10, 40);
 		offsetButton.GetComponent<RectTransform> ().sizeDelta = new Vector2 (30, 30);
-		iDButton.GetComponent<RectTransform> ().sizeDelta = new Vector2 (30, 30);
+		iDWaypointButton.GetComponent<RectTransform> ().sizeDelta = new Vector2 (30, 30);
+		iDCameraButton.GetComponent<RectTransform> ().sizeDelta = new Vector2 (30, 30);
 		iDInputField.GetComponent<RectTransform> ().sizeDelta = new Vector2 (65, 30);
 		radarButton.GetComponent<RectTransform> ().sizeDelta = new Vector2 (30, 30);
 		satelliteButton.GetComponent<RectTransform> ().sizeDelta = new Vector2 (30, 30);
@@ -82,11 +86,15 @@ public class Script_UICanvas : MonoBehaviour {
 	private float CountTotalHeightUsed () {
 		return 5
 			+ clockField.GetComponent<RectTransform> ().sizeDelta.y
-			+ 5 + 5
+			+ 5
+			+ 5
 			+ offsetButton.GetComponent<RectTransform> ().sizeDelta.y
 			+ 5
+			+ iDWaypointButton.GetComponent<RectTransform> ().sizeDelta.y
+			+ 5
 			+ plusButton.GetComponent<RectTransform> ().sizeDelta.y
-			+ 5 + 5
+			+ 5
+			+ 5
 			+ chatInputField.GetComponent<RectTransform> ().sizeDelta.y
 			+ 5;
 	}
@@ -95,7 +103,8 @@ public class Script_UICanvas : MonoBehaviour {
 		clockField.GetComponent<RectTransform> ().pivot = new Vector2 (0, 1);
 		scheduleField.GetComponent<RectTransform> ().pivot = new Vector2 (0, 1);
 		offsetButton.GetComponent<RectTransform> ().pivot = new Vector2 (0, 1);
-		iDButton.GetComponent<RectTransform> ().pivot = new Vector2 (0, 1);
+		iDWaypointButton.GetComponent<RectTransform> ().pivot = new Vector2 (0, 1);
+		iDCameraButton.GetComponent<RectTransform> ().pivot = new Vector2 (0, 1);
 		iDInputField.GetComponent<RectTransform> ().pivot = new Vector2 (0, 1);
 		radarButton.GetComponent<RectTransform> ().pivot = new Vector2 (0, 1);
 		satelliteButton.GetComponent<RectTransform> ().pivot = new Vector2 (0, 1);
@@ -112,8 +121,10 @@ public class Script_UICanvas : MonoBehaviour {
 		scheduleField.GetComponent<RectTransform> ().anchorMax = new Vector2 (0, 1);
 		offsetButton.GetComponent<RectTransform> ().anchorMin = new Vector2 (0, 1);
 		offsetButton.GetComponent<RectTransform> ().anchorMax = new Vector2 (0, 1);
-		iDButton.GetComponent<RectTransform> ().anchorMin = new Vector2 (0, 1);
-		iDButton.GetComponent<RectTransform> ().anchorMax = new Vector2 (0, 1);
+		iDWaypointButton.GetComponent<RectTransform> ().anchorMin = new Vector2 (0, 1);
+		iDWaypointButton.GetComponent<RectTransform> ().anchorMax = new Vector2 (0, 1);
+		iDCameraButton.GetComponent<RectTransform> ().anchorMin = new Vector2 (0, 1);
+		iDCameraButton.GetComponent<RectTransform> ().anchorMax = new Vector2 (0, 1);
 		iDInputField.GetComponent<RectTransform> ().anchorMin = new Vector2 (0, 1);
 		iDInputField.GetComponent<RectTransform> ().anchorMax = new Vector2 (0, 1);
 		radarButton.GetComponent<RectTransform> ().anchorMin = new Vector2 (0, 1);

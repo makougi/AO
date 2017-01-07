@@ -60,10 +60,7 @@ public class Script_AirplaneHeading : MonoBehaviour {
 			}
 		}
 		if (headingMode[0] == 1) {
-			if (!once) {
-				pointHeadingAssignedToBeacon ();
-				once = true;
-			}
+			pointHeadingAssignedToBeacon ();
 			if (Mathf.Abs (targetPosition[0].x - transform.position.x) < 10 && Mathf.Abs (targetPosition[0].z - transform.position.z) < 10) {
 				headingMode[0] = 0;
 			}
