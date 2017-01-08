@@ -35,7 +35,6 @@ public class Script_AirplaneText : MonoBehaviour {
 		lineImage.GetComponent<Image> ().color = new Color32 (255, 255, 255, 127);
 		transform.SetParent (dIPanelGO.transform);
 		lineImage.transform.SetParent (dIPanelGO.transform);
-		lineImage.SetActive (false);
 		RandomizeOffset (airplaneTextsOffsetBool, modeString);
 		this.gameObject.SetActive (modeString != "standby");
 	}
@@ -117,7 +116,7 @@ public class Script_AirplaneText : MonoBehaviour {
 	}
 
 	private void drawLine (Vector3 pointA, Vector3 pointB, float lineWidth) { // http://answers.unity3d.com/questions/865927/draw-a-2d-line-in-the-new-ui.html
-		if (this.gameObject.activeSelf && lineImageActive) {
+		if (GetComponent<Text> ().text != "" && lineImageActive) {
 			lineImage.SetActive (true);
 		} else {
 			lineImage.SetActive (false);

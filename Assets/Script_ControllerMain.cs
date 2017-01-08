@@ -34,7 +34,7 @@ public class Script_ControllerMain : MonoBehaviour {
 		counter = 0;
 		switchDisplay ("radar");
 
-		CreateFirstFlight ();
+		//CreateFirstFlight ();
 
 	}
 

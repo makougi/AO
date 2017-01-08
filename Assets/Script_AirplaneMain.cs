@@ -315,6 +315,7 @@ public class Script_AirplaneMain : MonoBehaviour {
 				if (controller.GetComponent<Script_ControllerMain> ().GetAirplaneTextsOffset ()) {
 					airplaneText.GetComponent<Script_AirplaneText> ().SetLineImageActive (true);
 				}
+				airplaneText.GetComponent<Script_AirplaneText> ().UpdateUIPosition (airplaneDotsScript.getAirplaneMainDotPosition ());
 			}
 			if (airplaneSpeedScript.GetSpeed () < 145) {
 				airplaneAltitudeScript.SetAltitude (0);
