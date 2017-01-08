@@ -19,7 +19,6 @@ public class Script_AirplaneMain : MonoBehaviour {
 
 
 	private string mode;
-	private string previousMode;
 	private bool readyForDestroy;
 	private bool abort;
 	private int id;
@@ -74,7 +73,7 @@ public class Script_AirplaneMain : MonoBehaviour {
 		ConstructOtherScriptsOfThisGameObject (altitudeInt, speedInt, headingInt, iDColorString, chatTextScript);
 		SetupAirplaneTextGameObject (iDInt, dIPanelGO, airplaneTextOffsetBool, modeString);
 		transform.eulerAngles = new Vector3 (0, headingInt, 0);
-		if (modeString == "takeoff") {
+		if (modeString == "standby") {
 			RunIfConstructTakeoffTrue (headingInt);
 		} else {
 			RunIfConstructTakeoffFalse (dispNameString);
@@ -113,7 +112,7 @@ public class Script_AirplaneMain : MonoBehaviour {
 		if (airplaneDotsScript) {
 			airplaneDotsScript.UpdateUIPosition ();
 		}
-		airplaneText.GetComponent<Script_AirplaneText> ().UpdateUIPosition (GetComponent<Script_AirplaneDots> ().getAirplaneMainDotPosition ());
+		airplaneText.GetComponent<Script_AirplaneText> ().UpdateUIPosition (airplaneDotsScript.getAirplaneMainDotPosition ());
 		if (airplaneWaypointsScript.WaypointDisplayIsActive ()) {
 			airplaneWaypointsScript.UpdateWaypointImagesUIPositionsAndDrawLines ();
 		}
@@ -313,6 +312,9 @@ public class Script_AirplaneMain : MonoBehaviour {
 			if (displayName == "radar") {
 				airplaneDotsScript.SetActive (true);
 				airplaneText.SetActive (true);
+				if (controller.GetComponent<Script_ControllerMain> ().GetAirplaneTextsOffset ()) {
+					airplaneText.GetComponent<Script_AirplaneText> ().SetLineImageActive (true);
+				}
 			}
 			if (airplaneSpeedScript.GetSpeed () < 145) {
 				airplaneAltitudeScript.SetAltitude (0);
@@ -379,35 +381,32 @@ public class Script_AirplaneMain : MonoBehaviour {
 	}
 
 	private void ConstructOtherScriptsOfThisGameObject (float airplaneAltitude, int airplaneSpeed, int airplaneHeading, string idColr, Script_ChatText chatTextScript) {
-		GetComponent<Script_AirplaneAltitude> ().Construct (airplaneAltitude);
-		GetComponent<Script_AirplaneSpeed> ().Construct (airplaneSpeed);
-		GetComponent<Script_AirplaneHeading> ().Construct (airplaneHeading);
-		GetComponent<Script_AirplaneChat> ().Construct (idColr, chatTextScript);
+		airplaneAltitudeScript.Construct (airplaneAltitude);
+		airplaneSpeedScript.Construct (airplaneSpeed);
+		airplaneHeadingScript.Construct (airplaneHeading);
+		airplaneChatScript.Construct (idColr, chatTextScript);
+		airplaneDotsScript.Construct ();
 	}
 
 	private void SetupVariablesOfThisScripts (string dispName, int airplaneId, string modeString, int airplaneHeading, GameObject controllerGameObject) {
 		displayName = dispName;
 		id = airplaneId;
-		if (modeString == "takeoff") {
-			mode = "standby";
-		} else {
-			mode = modeString;
-		}
+		mode = modeString;
 		takeoffHeading = airplaneHeading;
 		controller = controllerGameObject;
 	}
 
 	private void RunIfConstructTakeoffTrue (int airplaneHeading) {
-		GetComponent<Script_AirplaneDots> ().SetActive (false);
+		airplaneDotsScript.SetActive (false);
+		airplaneAltitudeScript.SetAltitudeMin (0);
+		airplaneSpeedScript.SetSpeedMin (0);
 		GetComponent<Collider> ().enabled = false;
-		GetComponent<Script_AirplaneAltitude> ().SetAltitudeMin (0);
-		GetComponent<Script_AirplaneSpeed> ().SetSpeedMin (0);
 	}
 
 	private void RunIfConstructTakeoffFalse (string dispName) {
+		airplaneAltitudeScript.SetAltitudeMin (1000);
+		airplaneSpeedScript.SetSpeedMin (140);
 		GetComponent<Collider> ().enabled = true;
-		GetComponent<Script_AirplaneAltitude> ().SetAltitudeMin (1000);
-		GetComponent<Script_AirplaneSpeed> ().SetSpeedMin (140);
 	}
 
 	private void SetupTimeCounterForUIElementsUpdate () {

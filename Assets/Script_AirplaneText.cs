@@ -6,7 +6,6 @@ public class Script_AirplaneText : MonoBehaviour {
 
 	public GameObject lineImage;
 
-	private GameObject controller;
 	private Vector3 airplaneMainDotUIPosition;
 	private Vector3 offset;
 	private Vector3 offsetDirection;
@@ -17,6 +16,7 @@ public class Script_AirplaneText : MonoBehaviour {
 	private int airplaneFlightlevelAssigned;
 	private int airplaneHeading;
 	private int airplaneSpeed;
+	private bool lineImageActive;
 
 	// Use this for initialization
 	void Start () {
@@ -35,7 +35,8 @@ public class Script_AirplaneText : MonoBehaviour {
 		lineImage.GetComponent<Image> ().color = new Color32 (255, 255, 255, 127);
 		transform.SetParent (dIPanelGO.transform);
 		lineImage.transform.SetParent (dIPanelGO.transform);
-		RandomizeOffset (airplaneTextsOffsetBool);
+		lineImage.SetActive (false);
+		RandomizeOffset (airplaneTextsOffsetBool, modeString);
 		this.gameObject.SetActive (modeString != "standby");
 	}
 
@@ -52,19 +53,19 @@ public class Script_AirplaneText : MonoBehaviour {
 		UpdateText ();
 	}
 
-	void UpdatePosition () {
+	private void UpdatePosition () {
 		transform.position = airplaneMainDotUIPosition + offset;
 		drawLine (airplaneMainDotUIPosition + offsetDirection * 15, transform.position - offsetDirection * 30, 2);
 	}
 
-	void UpdateText () {
+	private void UpdateText () {
 		GetComponent<Text> ().text = ""
 		+ IdToFourDigitString (airplaneId) + "\n"
 		+ airplaneFlightlevel + "  " + airplaneFlightlevelAssigned + "\n"
 		+ airplaneSpeed + "  " + HeadingToThreeDigitString (airplaneHeading);
 	}
 
-	string IdToFourDigitString (int integ) {
+	private string IdToFourDigitString (int integ) {
 		if (integ > 999) {
 			return integ.ToString ();
 		}
@@ -77,7 +78,7 @@ public class Script_AirplaneText : MonoBehaviour {
 		return "000" + integ;
 	}
 
-	string HeadingToThreeDigitString (int integ) {
+	private string HeadingToThreeDigitString (int integ) {
 		if (integ > 999) {
 			return "999";
 		}
@@ -93,17 +94,22 @@ public class Script_AirplaneText : MonoBehaviour {
 		return "000";
 	}
 
-	public void RandomizeOffset (bool active) {
+	public void SetLineImageActive (bool b) {
+		lineImageActive = b;
+	}
+
+	public void RandomizeOffset (bool active, string modeString) {
 		if (active) {
 			int offsetAngle = UnityEngine.Random.Range (0, 360);
 			float offsetDistance = UnityEngine.Random.Range (50f, 150f);
 			offsetDirection = Quaternion.AngleAxis (offsetAngle, Vector3.forward) * Vector3.up;
 			offset = offsetDirection * offsetDistance;
-			transform.position = airplaneMainDotUIPosition + offset;
+			if (modeString != "standby") {
+				lineImageActive = true;
+			}
 			UpdatePosition ();
-			lineImage.SetActive (true);
 		} else {
-			lineImage.SetActive (false);
+			lineImageActive = false;
 			offset = offsetDefault;
 			transform.position = airplaneMainDotUIPosition + offset;
 			UpdatePosition ();
@@ -111,8 +117,12 @@ public class Script_AirplaneText : MonoBehaviour {
 	}
 
 	private void drawLine (Vector3 pointA, Vector3 pointB, float lineWidth) { // http://answers.unity3d.com/questions/865927/draw-a-2d-line-in-the-new-ui.html
+		if (this.gameObject.activeSelf && lineImageActive) {
+			lineImage.SetActive (true);
+		} else {
+			lineImage.SetActive (false);
+		}
 		Vector3 differenceVector = pointB - pointA;
-
 		lineImage.GetComponent<RectTransform> ().sizeDelta = new Vector2 (differenceVector.magnitude, lineWidth);
 		lineImage.GetComponent<RectTransform> ().pivot = new Vector2 (0, 0.5f);
 		lineImage.GetComponent<RectTransform> ().position = pointA;

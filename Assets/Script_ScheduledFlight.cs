@@ -27,7 +27,7 @@ public class Script_ScheduledFlight : ScriptableObject {
 		entryTime = SelectArbitraryEntrytime (previousEntryTime);
 		id = CreateId (activeIds);
 		SelectArbitraryEntrypoint (entrypoints);
-		if (mode == "takeoff") {
+		if (mode == "standby") {
 			altitude = 0;
 			speed = 0;
 		} else {
@@ -37,7 +37,7 @@ public class Script_ScheduledFlight : ScriptableObject {
 	}
 
 	DateTime SelectArbitraryEntrytime (DateTime previousEntryTime) {
-		int maxEntryTimeSeparationInSeconds = 240;
+		int maxEntryTimeSeparationInSeconds = 60;
 		return previousEntryTime.AddSeconds (UnityEngine.Random.Range (0, maxEntryTimeSeparationInSeconds));
 	}
 
@@ -64,14 +64,14 @@ public class Script_ScheduledFlight : ScriptableObject {
 		entrypointPosition = entrypoint.GetPosition ();
 		heading = entrypoint.GetDirection ();
 		if (entrypoint.GetTakeoff ()) {
-			mode = "takeoff";
+			mode = "standby";
 		} else {
 			mode = "default";
 		}
 	}
 
 	override public string ToString () {
-		if (mode == "takeoff") {
+		if (mode == "standby") {
 			return "ETA " + HourOrMinuteToTwoDigitString (entryTime.Hour) + ":" + HourOrMinuteToTwoDigitString (entryTime.Minute) + " - ID " + IdToFourDigitString (id) + " - " + entrypointId;
 		}
 		return "ETA " + HourOrMinuteToTwoDigitString (entryTime.Hour) + ":" + HourOrMinuteToTwoDigitString (entryTime.Minute) + " - ID " + IdToFourDigitString (id) + " - " + entrypointId + " - FL" + AltitudeToRoundedFlightlevelString (altitude);

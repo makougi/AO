@@ -94,17 +94,10 @@ public class Script_ControllerMain : MonoBehaviour {
 		}
 	}
 
-	public void toggleAirplaneTextsOffset (bool active) {
-		if (active) {
-			airplaneTextsOffset = true;
-			foreach (GameObject ap in airplanesList) {
-				ap.GetComponent<Script_AirplaneMain> ().GetAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (true);
-			}
-		} else {
-			airplaneTextsOffset = false;
-			foreach (GameObject ap in airplanesList) {
-				ap.GetComponent<Script_AirplaneMain> ().GetAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (false);
-			}
+	public void toggleAirplaneTextsOffset (bool offsetBool) {
+		airplaneTextsOffset = offsetBool;
+		foreach (GameObject ap in airplanesList) {
+			ap.GetComponent<Script_AirplaneMain> ().GetAirplaneText ().GetComponent<Script_AirplaneText> ().RandomizeOffset (offsetBool, ap.GetComponent<Script_AirplaneMain> ().GetMode ());
 		}
 	}
 

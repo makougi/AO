@@ -20,6 +20,14 @@ public class Script_AirplaneDots : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+	}
+
+	// Update is called once per frame
+	void Update () {
+
+	}
+
+	public void Construct () {
 		airplaneMainDot = Instantiate (airplaneMainDot);
 		airplaneMainDot.transform.SetParent (GetComponent<Script_AirplaneMain> ().GetController ().GetComponent<Script_ControllerMain> ().GetDIPanel ().transform);
 		airplaneMainDot.transform.position = new Vector3 (Camera.main.WorldToScreenPoint (transform.position).x, Camera.main.WorldToScreenPoint (transform.position).y, 0);
@@ -43,11 +51,6 @@ public class Script_AirplaneDots : MonoBehaviour {
 			ad.SetActive (active);
 		}
 		airplaneDot.SetActive (active);
-	}
-
-	// Update is called once per frame
-	void Update () {
-
 	}
 
 	public void UpdateWorldPosition () {
