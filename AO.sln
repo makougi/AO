@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
+# Visual Studio 2017
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AO", "AO.csproj", "{07C9E8C4-483C-3E76-0CE5-456831A46E68}"
 EndProject
 Global
