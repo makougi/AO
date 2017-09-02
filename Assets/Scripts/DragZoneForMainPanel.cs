@@ -3,16 +3,12 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 
-public class DragPanelForButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler {
-
-	public GameObject uICanvas;
+public class DragZoneForMainPanel : MonoBehaviour, IPointerDownHandler, IDragHandler {
 
 	public Vector2 originalLocalPointerPosition;
 	public Vector3 originalPanelLocalPosition;
 	public RectTransform panelRectTransform;
 	public RectTransform parentRectTransform;
-
-	private bool hasMoved;
 
 	void Awake () {
 		panelRectTransform = transform.parent as RectTransform;
@@ -20,21 +16,12 @@ public class DragPanelForButton : MonoBehaviour, IPointerDownHandler, IPointerUp
 	}
 
 	public void OnPointerDown (PointerEventData data) {
-		hasMoved = false;
-		transform.parent.GetComponent<Image> ().color = new Color32 (200, 200, 200, 255);
+		SiblingHandler.SetOnFront (transform);
 		originalPanelLocalPosition = panelRectTransform.localPosition;
 		RectTransformUtility.ScreenPointToLocalPointInRectangle (parentRectTransform, data.position, data.pressEventCamera, out originalLocalPointerPosition);
 	}
 
-	public void OnPointerUp(PointerEventData data) {
-		if (!hasMoved) {
-			ButtonClick ();
-		}
-		transform.parent.GetComponent<Image> ().color = new Color32 (255, 255, 255, 255);
-	}
-
 	public void OnDrag (PointerEventData data) {
-		hasMoved = true;
 		if (panelRectTransform == null || parentRectTransform == null)
 			return;
 
@@ -43,7 +30,11 @@ public class DragPanelForButton : MonoBehaviour, IPointerDownHandler, IPointerUp
 			Vector3 offsetToOriginal = localPointerPosition - originalLocalPointerPosition;
 			panelRectTransform.localPosition = originalPanelLocalPosition + offsetToOriginal;
 		}
+		ClampToWindow ();
+	}
 
+	public void OtherDrag (Vector3 offset) {
+		panelRectTransform.localPosition += offset;
 		ClampToWindow ();
 	}
 
@@ -51,15 +42,12 @@ public class DragPanelForButton : MonoBehaviour, IPointerDownHandler, IPointerUp
 	private void ClampToWindow () {
 		Vector3 pos = panelRectTransform.localPosition;
 
-		Vector3 minPosition = parentRectTransform.rect.min - panelRectTransform.rect.min;
+		Vector3 minPosition =  parentRectTransform.rect.min - panelRectTransform.rect.min;
 		Vector3 maxPosition = parentRectTransform.rect.max - panelRectTransform.rect.max;
 
 		pos.x = Mathf.Clamp (panelRectTransform.localPosition.x, minPosition.x, maxPosition.x);
 		pos.y = Mathf.Clamp (panelRectTransform.localPosition.y, minPosition.y, maxPosition.y);
 
 		panelRectTransform.localPosition = pos;
-	}
-
-	private void ButtonClick () {
 	}
 }

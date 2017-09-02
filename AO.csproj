@@ -78,6 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\mainbuttontesti.cs" />
     <Compile Include="Assets\Scripts\Airplane\AirplaneAltitude.cs" />
     <Compile Include="Assets\Scripts\Airplane\AirplaneBeaconRotator.cs" />
     <Compile Include="Assets\Scripts\Airplane\AirplaneChat.cs" />
@@ -101,9 +102,9 @@
     <Compile Include="Assets\Scripts\ColorsInterface.cs" />
     <Compile Include="Assets\Scripts\ControllerMain.cs" />
     <Compile Include="Assets\Scripts\ControllerServices.cs" />
-    <Compile Include="Assets\Scripts\DragPanelForButton.cs" />
-    <Compile Include="Assets\Scripts\DragPanelForDropDown.cs" />
-    <Compile Include="Assets\Scripts\DragPanelForPanel.cs" />
+    <Compile Include="Assets\Scripts\DragZoneForDropDown.cs" />
+    <Compile Include="Assets\Scripts\DragZoneForMainButton.cs" />
+    <Compile Include="Assets\Scripts\DragZoneForMainPanel.cs" />
     <Compile Include="Assets\Scripts\FlightEntrypoint.cs" />
     <Compile Include="Assets\Scripts\IDCameraButton.cs" />
     <Compile Include="Assets\Scripts\IDInputField.cs" />
@@ -119,6 +120,7 @@
     <Compile Include="Assets\Scripts\Schedule.cs" />
     <Compile Include="Assets\Scripts\ScheduledFlight.cs" />
     <Compile Include="Assets\Scripts\ScheduleText.cs" />
+    <Compile Include="Assets\Scripts\SiblingHandler.cs" />
     <Compile Include="Assets\Scripts\UICanvas.cs" />
     <Compile Include="Assets\Scripts\UIController.cs" />
     <Compile Include="Assets\Scripts\Waypoint.cs" />
